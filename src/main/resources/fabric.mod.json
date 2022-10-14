@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "more-particle",
+  "version": "1.1.5",
+  "name": "More Particle",
+  "description": "",
+  "icon": "icon.png",
+  "authors": ["soy_bottle"],
+  "contact": {
+    "homepage": "https://soy-bottle.top/project/more-particle",
+    "sources": "https://github.com/BottleSoy/MoreParticle",
+    "email": "soy@soy-bottle.top"
+  },
+  "license": "GPL",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "name.soy.moreparticle.MoreParticle"
+    ],
+    "client": [
+      "name.soy.moreparticle.client.MoreParticleClient"
+    ]
+  },
+  "mixins": [
+    "more-particle.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "name.soy.moreparticle.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ParticleCommandMixin"
+  ],
+  "client": [
+    "ClientPlayNetworkHandlerMixin",
+    "ClientWorldAccessor",
+    "ParticleManagerMixin",
+    "WorldRenderInvoker"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
