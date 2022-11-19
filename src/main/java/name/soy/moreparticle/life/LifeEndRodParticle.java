@@ -14,7 +14,6 @@ import net.minecraft.util.Identifier;
  */
 public class LifeEndRodParticle extends AnimatedParticle {
 
-
 	public static void register() {
 
 		ParticleFactoryRegistry.getInstance().register(LifeEndRodEffect.type, Factory::new);

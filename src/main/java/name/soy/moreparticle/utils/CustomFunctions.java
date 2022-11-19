@@ -1,6 +1,6 @@
 package name.soy.moreparticle.utils;
 
-import javafx.scene.paint.Color;
+import java.awt.Color;
 import net.objecthunter.exp4j.function.Function;
 
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class CustomFunctions {
         funcs.add(new Function("hsb", 3) {
             @Override
             public double apply(double... args) {
-                Color color = Color.hsb(args[0], args[1], args[2]);
+                Color color = Color.getHSBColor((float) args[0], (float) args[1], (float) args[2]);
                 return Math.round(color.getRed() * 255) * 65536 + Math.round(color.getGreen() * 255) * 256 + Math.round(color.getBlue() * 255);
             }
         });

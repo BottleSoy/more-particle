@@ -38,7 +38,7 @@ public class DelayedParticle extends LifedColoredParticle {
 		} else {
 			this.setSpriteForAge(this.spriteProvider);
 			if (this.age > this.maxAge / 2) {
-				this.setColorAlpha(1.0F - ((float) this.age - (float) (this.maxAge / 2)) / (float) this.maxAge);
+				this.setAlpha(1.0F - ((float) this.age - (float) (this.maxAge / 2)) / (float) this.maxAge);
 			}
 			if (age > delayTime) {
 				this.velocityX *= 0.91F;

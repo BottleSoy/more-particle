@@ -29,6 +29,9 @@ public class SeqParticle extends AnimatedParticle {
 		if (age < effect.clist.size()) {
 			this.setColor(effect.clist.get(age));
 		}
+		if (age < effect.alist.size()) {
+			this.scale(effect.alist.get(age));
+		}
 		this.maxAge = new Random().nextInt(effect.random) + effect.age;
 		this.setSpriteForAge(spriteProvider);
 	}
@@ -62,7 +65,7 @@ public class SeqParticle extends AnimatedParticle {
 				this.setColor(effect.clist.get(age));
 			}
 			if (age < effect.alist.size()) {
-				this.setColorAlpha(effect.alist.get(age));
+				this.scale(effect.alist.get(age));
 			}
 			velocityX = cx - lx;
 			velocityY = cy - ly;

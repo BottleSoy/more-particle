@@ -4,7 +4,9 @@
   "package": "name.soy.moreparticle.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ParticleCommandMixin"
+    "ParticleCommandMixin",
+    "ServerWorldAccessor",
+    "ServerWorldMixin"
   ],
   "client": [
     "ClientPlayNetworkHandlerMixin",

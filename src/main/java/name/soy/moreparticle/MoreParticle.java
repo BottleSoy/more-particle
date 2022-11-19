@@ -9,7 +9,7 @@ import name.soy.moreparticle.life.LifeEndRodEffect;
 import name.soy.moreparticle.seq.SeqEffect;
 import name.soy.moreparticle.speed.DelayedEffect;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
 import net.minecraft.util.Identifier;
@@ -29,7 +29,7 @@ public class MoreParticle implements ModInitializer {
         LifeEndRodEffect.register();
         DelayedEffect.register();
         SeqEffect.register();
-        CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             KillParticleCommand.register(dispatcher);
         });
 
