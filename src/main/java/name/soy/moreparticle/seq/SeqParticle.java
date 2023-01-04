@@ -1,8 +1,6 @@
 package name.soy.moreparticle.seq;
 
 import lombok.RequiredArgsConstructor;
-import name.soy.moreparticle.calc.BestEffect;
-import name.soy.moreparticle.calc.BestParticle;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.minecraft.client.particle.AnimatedParticle;
 import net.minecraft.client.particle.Particle;
@@ -30,7 +28,7 @@ public class SeqParticle extends AnimatedParticle {
 			this.setColor(effect.clist.get(age));
 		}
 		if (age < effect.alist.size()) {
-			this.scale(effect.alist.get(age));
+			this.scale = effect.alist.get(age);
 		}
 		this.maxAge = new Random().nextInt(effect.random) + effect.age;
 		this.setSpriteForAge(spriteProvider);
@@ -65,7 +63,7 @@ public class SeqParticle extends AnimatedParticle {
 				this.setColor(effect.clist.get(age));
 			}
 			if (age < effect.alist.size()) {
-				this.scale(effect.alist.get(age));
+				this.scale = effect.alist.get(age);
 			}
 			velocityX = cx - lx;
 			velocityY = cy - ly;

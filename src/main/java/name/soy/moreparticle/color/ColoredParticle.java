@@ -1,8 +1,5 @@
 package name.soy.moreparticle.color;
 
-import name.soy.moreparticle.MoreParticle;
-import name.soy.moreparticle.life.LifeEndRodEffect;
-import name.soy.moreparticle.life.LifeEndRodParticle;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -11,8 +8,6 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.util.Identifier;
 
 public class ColoredParticle extends AnimatedParticle {
 

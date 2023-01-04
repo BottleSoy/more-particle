@@ -3,8 +3,8 @@ package name.soy.moreparticle.command;
 import com.google.common.collect.Lists;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import io.netty.buffer.Unpooled;
 import name.soy.moreparticle.MoreParticle;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
@@ -39,7 +39,7 @@ public class KillParticleCommand {
 
 	public static void killParicle(Collection<ServerPlayerEntity> players, String tag) {
 		players.forEach(player -> {
-			PacketByteBuf buf = PacketByteBufs.create();
+			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
 			buf.writeInt(1);
 			buf.writeString(tag);
 			player.networkHandler.sendPacket(new CustomPayloadS2CPacket(MoreParticle.id, buf));
