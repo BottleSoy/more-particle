@@ -12,8 +12,9 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.function.Function;
 
@@ -36,7 +37,7 @@ public class MoreParticle implements ModInitializer {
     }
 
     public static <T extends ParticleEffect> ParticleType<T> register(Identifier name, ParticleEffect.Factory<T> factory, final Function<ParticleType<T>, Codec<T>> function) {
-        return Registry.register(Registry.PARTICLE_TYPE, name, new ParticleType<T>(false, factory) {
+        return Registry.register(Registries.PARTICLE_TYPE, name, new ParticleType<T>(false, factory) {
             public Codec<T> getCodec() {
                 return function.apply(this);
             }

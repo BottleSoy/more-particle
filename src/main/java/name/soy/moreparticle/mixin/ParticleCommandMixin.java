@@ -18,6 +18,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ParticleCommand;
 import net.minecraft.server.command.ServerCommandSource;
@@ -25,8 +26,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -80,7 +79,7 @@ public class ParticleCommandMixin {
 		if (i == 0) {
 			throw FAILED_EXCEPTION.create();
 		} else {
-			source.sendFeedback(Text.translatable("commands.particle.success", Registry.PARTICLE_TYPE.getId(parameters.getType()).toString()), true);
+			source.sendFeedback(Text.translatable("commands.particle.success", Registries.PARTICLE_TYPE.getId(parameters.getType()).toString()), true);
 			return i;
 		}
 	}
