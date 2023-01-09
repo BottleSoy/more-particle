@@ -10,6 +10,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.netty.buffer.Unpooled;
 import name.soy.moreparticle.MoreParticle;
+import net.minecraft.block.CommandBlock;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.ParticleEffectArgumentType;
 import net.minecraft.command.argument.Vec3ArgumentType;
@@ -48,7 +49,6 @@ public class ParticleCommandMixin {
 		return instance.then(argumentBuilder.then(CommandManager.argument("tag", StringArgumentType.string())
 			.executes(context -> sendParticleWithTag(context, true))
 		));
-
 	}
 
 	@Redirect(method = "register", at = @At(value = "INVOKE", ordinal = 1, target = "Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;then(Lcom/mojang/brigadier/builder/ArgumentBuilder;)Lcom/mojang/brigadier/builder/ArgumentBuilder;"))
