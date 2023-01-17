@@ -9,6 +9,7 @@ import io.netty.buffer.Unpooled;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 import name.soy.moreparticle.MoreParticle;
+import name.soy.moreparticle.utils.ZipUtils;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
@@ -52,12 +53,20 @@ public class SeqEffect implements ParticleEffect, Serializable {
 		public SeqEffect read(ParticleType<SeqEffect> particleType, StringReader stringReader) throws CommandSyntaxException {
 			stringReader.expect(' ');
 			char firstChar = stringReader.peek();
-			if (firstChar == 'R') {
+			if (firstChar == 'C') {
 				stringReader.skip();
 				stringReader.expect(' ');
 				stringReader.expect('\'');
 				String base64 = stringReader.readStringUntil('\'');
-				byte[] data = Base64.getMimeDecoder().decode(base64);
+				byte[] data = Base64.getDecoder().decode(base64);
+				ByteBuf buf = Unpooled.wrappedBuffer(ZipUtils.decompress(data));
+				return read(type, new PacketByteBuf(buf));
+			} else if (firstChar == 'R') {
+				stringReader.skip();
+				stringReader.expect(' ');
+				stringReader.expect('\'');
+				String base64 = stringReader.readStringUntil('\'');
+				byte[] data = Base64.getDecoder().decode(base64);
 				ByteBuf buf = Unpooled.wrappedBuffer(data);
 				return read(type, new PacketByteBuf(buf));
 			} else {
