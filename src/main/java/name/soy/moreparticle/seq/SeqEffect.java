@@ -33,15 +33,15 @@ public class SeqEffect implements ParticleEffect, Serializable {
 		);
 	}
 
-	public static final Codec<SeqEffect> CODEC = RecordCodecBuilder.create((instance) ->
+	public static final Codec<SeqEffect> CODEC = RecordCodecBuilder.create(instance ->
 		instance.group(
-			Codec.list(Codec.DOUBLE).fieldOf("xlist").forGetter(e -> (e.xlist)),
-			Codec.list(Codec.DOUBLE).fieldOf("ylist").forGetter(e -> (e.ylist)),
-			Codec.list(Codec.DOUBLE).fieldOf("zlist").forGetter(e -> (e.zlist)),
+			Codec.list(Codec.DOUBLE).fieldOf("xlist").forGetter(e -> e.xlist),
+			Codec.list(Codec.DOUBLE).fieldOf("ylist").forGetter(e -> e.ylist),
+			Codec.list(Codec.DOUBLE).fieldOf("zlist").forGetter(e -> e.zlist),
 			Codec.INT.fieldOf("age").forGetter(e -> e.age),
 			Codec.INT.fieldOf("random").forGetter(e -> e.random),
-			Codec.list(Codec.INT).fieldOf("clist").forGetter(e -> (e.clist)),
-			Codec.list(Codec.FLOAT).fieldOf("alist").forGetter(e -> (e.alist))
+			Codec.list(Codec.INT).fieldOf("clist").forGetter(e -> e.clist),
+			Codec.list(Codec.FLOAT).fieldOf("alist").forGetter(e -> e.alist)
 		).apply(instance, SeqEffect::new));
 
 	List<Double> xlist, ylist, zlist;

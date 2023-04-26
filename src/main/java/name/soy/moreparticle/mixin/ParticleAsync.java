@@ -2,6 +2,7 @@
 //
 //import com.google.common.collect.Lists;
 //import lombok.val;
+//import name.soy.moreparticle.client.MoreParticleClient;
 //import net.minecraft.client.particle.EmitterParticle;
 //import net.minecraft.client.particle.Particle;
 //import net.minecraft.client.particle.ParticleManager;
@@ -15,7 +16,6 @@
 //import java.util.*;
 //import java.util.concurrent.ExecutorService;
 //import java.util.concurrent.Executors;
-//import java.util.concurrent.Future;
 //
 ///**
 // * 测试多线程性能使用
@@ -23,19 +23,10 @@
 // */
 //@Mixin(ParticleManager.class)
 //public abstract class ParticleAsync {
-//	private static final ExecutorService exec = Executors.newFixedThreadPool(32);
-//	private static final List<Future<List<Particle>>> submits = new ArrayList<>();
+//	private static final ExecutorService exec = Executors.newFixedThreadPool(14);
 //
 //	@Shadow
 //	protected abstract void tickParticle(Particle particle);
-//
-//	@Shadow
-//	@Final
-//	private Map<ParticleTextureSheet, Queue<Particle>> particles;
-//
-//	@Shadow @Final private Queue<Particle> newParticles;
-//
-//	@Shadow @Final private Queue<EmitterParticle> newEmitterParticles;
 //
 //	@Shadow protected ClientWorld world;
 //
@@ -52,6 +43,8 @@
 //			while (iterator.hasNext()) {
 //				val part = iterator.next();
 //				if (!part.isAlive()) {
+//					String tag = MoreParticleClient.tagParticles.remove(part);
+//					if (tag != null) MoreParticleClient.particleTags.get(tag).remove(part);
 //					iterator.remove();
 //					continue;
 //				}
@@ -69,34 +62,4 @@
 //
 //	}
 //
-//	/**
-//	 * @author soy
-//	 * @reason test
-//	 */
-//	@Overwrite
-//	public void tick() {
-//		this.particles.forEach((particleTextureSheet, queue) -> {
-//			this.world.getProfiler().push(particleTextureSheet.toString());
-//			this.tickParticles(queue);
-//			this.world.getProfiler().pop();
-//		});
-//		if (!this.newEmitterParticles.isEmpty()) {
-//			List<EmitterParticle> list = Lists.newArrayList();
-//			for (EmitterParticle emitterParticle : this.newEmitterParticles) {
-//				emitterParticle.tick();
-//				if (!emitterParticle.isAlive()) {
-//					list.add(emitterParticle);
-//				}
-//			}
-//
-//			this.newEmitterParticles.removeAll(list);
-//		}
-//
-//		Particle particle;
-//		if (!this.newParticles.isEmpty()) {
-//			while((particle = this.newParticles.poll()) != null) {
-//				this.particles.computeIfAbsent(particle.getType(), particleTextureSheet -> new LinkedList<>()).add(particle);
-//			}
-//		}
-//	}
 //}

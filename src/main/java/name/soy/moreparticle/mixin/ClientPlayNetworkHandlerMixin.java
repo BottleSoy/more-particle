@@ -34,7 +34,11 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketL
 	@Shadow
 	public abstract ClientWorld getWorld();
 
-	@Shadow @Final private Random random;
+	@Shadow
+	@Final
+	private Random random;
+
+	@Shadow public abstract void onParticle(ParticleS2CPacket packet);
 
 	@Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
 	private void onCustomPayload(CustomPayloadS2CPacket payload, CallbackInfo ci) {
@@ -43,8 +47,13 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketL
 			NetworkThreadUtils.forceMainThread(payload, this, client);
 			PacketByteBuf buf = payload.getData();
 			int action = buf.readInt();
-			if (action == 0) {
-
+			if (action == -1) {
+				var count = buf.readInt();
+				for (int i = 0; i < count; i++) {
+					var packet = new ParticleS2CPacket(buf);
+					this.onParticle(packet);
+				}
+			} else if (action == 0) {
 				String tag = buf.readString();
 				ParticleS2CPacket packet = new ParticleS2CPacket(buf);
 				ClientWorldAccessor world = (ClientWorldAccessor) getWorld();

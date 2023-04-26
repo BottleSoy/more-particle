@@ -44,7 +44,7 @@ public class ParticleCommandMixin {
 
 
 	//force
-	@Redirect(method = "register", at = @At(value = "INVOKE", ordinal = 0, target = "Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;then(Lcom/mojang/brigadier/builder/ArgumentBuilder;)Lcom/mojang/brigadier/builder/ArgumentBuilder;"))
+	@Redirect(method = "register", at =    @At(value = "INVOKE", ordinal = 0, target = "Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;then(Lcom/mojang/brigadier/builder/ArgumentBuilder;)Lcom/mojang/brigadier/builder/ArgumentBuilder;"))
 	private static ArgumentBuilder<ServerCommandSource, ?> beforeRegForce(LiteralArgumentBuilder<ServerCommandSource> instance, ArgumentBuilder<ServerCommandSource, ?> argumentBuilder) {
 		return instance.then(argumentBuilder.then(CommandManager.argument("tag", StringArgumentType.string())
 			.executes(context -> sendParticleWithTag(context, true))

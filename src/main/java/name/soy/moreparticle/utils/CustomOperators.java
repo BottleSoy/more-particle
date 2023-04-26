@@ -1,6 +1,5 @@
 package name.soy.moreparticle.utils;
 
-import net.objecthunter.exp4j.function.Function;
 import net.objecthunter.exp4j.operator.Operator;
 
 import java.util.ArrayList;

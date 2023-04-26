@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "CommandManagerMixin",
+    "CustomPayloadS2CPacketMixin",
     "ParticleCommandMixin",
     "ServerWorldAccessor",
     "ServerWorldMixin"
@@ -13,7 +14,8 @@
     "ClientPlayNetworkHandlerMixin",
     "ClientWorldAccessor",
     "ParticleManagerMixin",
-    "WorldRenderInvoker"
+    "WorldRenderInvoker",
+    "WorldRenderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

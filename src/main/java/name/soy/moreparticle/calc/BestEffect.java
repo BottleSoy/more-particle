@@ -35,7 +35,7 @@ public class BestEffect implements ParticleEffect {
                     Codec.INT.fieldOf("random").forGetter(e -> e.random),
                     Codec.STRING.fieldOf("cfun").forGetter(e -> e.cfun)
             ).apply(instance, BestEffect::new));
-    public static final Factory<BestEffect> PARAMETERS_FACTORY = new Factory<BestEffect>() {
+    public static final Factory<BestEffect> PARAMETERS_FACTORY = new Factory<>() {
         public BestEffect read(ParticleType<BestEffect> particleType, StringReader stringReader) throws CommandSyntaxException {
             stringReader.expect(' ');
             stringReader.expect('\'');
