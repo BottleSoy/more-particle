@@ -5,6 +5,7 @@ import name.soy.moreparticle.MoreParticlePayload;
 import name.soy.moreparticle.client.MoreParticleClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommonNetworkHandler;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.NetworkThreadUtils;
@@ -31,15 +32,11 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 	protected MinecraftClient client;
 
 
-	public abstract ClientWorld getWorld();
-
-	@Final
-	private Random random;
-
-	public abstract void onParticle(ParticleS2CPacket packet);
-
 	@Inject(method = "onCustomPayload(Lnet/minecraft/network/packet/s2c/common/CustomPayloadS2CPacket;)V", at = @At("HEAD"), cancellable = true)
 	private void onCustomPayload(CustomPayloadS2CPacket payload, CallbackInfo ci) {
+		if(!(((ClientCommonPacketListener)this) instanceof ClientPlayNetworkHandler)) return;
+		ClientCommonPacketListener lc = this;
+		Random random = ((ClientPlayNetworkHandler) lc).getWorld().random;
 		NetworkThreadUtils.forceMainThread(payload, this, client);
 		if (payload.payload() instanceof MoreParticlePayload mpp) {
 			ci.cancel();
@@ -51,13 +48,13 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 				var count = buf.readInt();
 				for (int i = 0; i < count; i++) {
 					var packet = new ParticleS2CPacket(buf);
-					this.onParticle(packet);
+					((ClientPlayNetworkHandler) lc).onParticle(packet);
 				}
 			} else if (action == 0) {
 				String tag = buf.readString();
 
 				ParticleS2CPacket packet = new ParticleS2CPacket(buf);
-				ClientWorldAccessor world = (ClientWorldAccessor) getWorld();
+				ClientWorldAccessor world = (ClientWorldAccessor) ((ClientPlayNetworkHandler) lc).getWorld();
 				WorldRenderInvoker render = (WorldRenderInvoker) world.getWorldRenderer();
 				if (packet.getCount() == 0) {
 					double d = packet.getSpeed() * packet.getOffsetX();
