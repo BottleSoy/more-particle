@@ -5,9 +5,10 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.netty.buffer.Unpooled;
 import name.soy.moreparticle.MoreParticle;
+import name.soy.moreparticle.MoreParticlePayload;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -47,7 +48,7 @@ public class KillParticleCommand {
 				buf.writeString(tag);
 			}
 
-			player.networkHandler.sendPacket(new CustomPayloadS2CPacket(MoreParticle.id, buf));
+			player.networkHandler.sendPacket(new CustomPayloadS2CPacket(new MoreParticlePayload(buf)));
 		});
 	}
 }

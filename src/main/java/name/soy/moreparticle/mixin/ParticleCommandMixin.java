@@ -11,13 +11,14 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.netty.buffer.Unpooled;
 import name.soy.moreparticle.MoreParticle;
+import name.soy.moreparticle.MoreParticlePayload;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.ParticleEffectArgumentType;
 import net.minecraft.command.argument.Vec3ArgumentType;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.Registries;
@@ -80,7 +81,7 @@ public class ParticleCommandMixin {
 		if (i == 0) {
 			throw FAILED_EXCEPTION.create();
 		} else {
-			source.sendFeedback(Text.translatable("commands.particle.success", Registries.PARTICLE_TYPE.getId(parameters.getType()).toString()), true);
+			source.sendFeedback(() -> Text.translatable("commands.particle.success", Registries.PARTICLE_TYPE.getId(parameters.getType()).toString()), true);
 			return i;
 		}
 	}
@@ -95,7 +96,7 @@ public class ParticleCommandMixin {
 		packet.write(buf);
 		if (((ServerWorldAccessor) world).shouldSendParticle(player, force, x, y, z, packet)) {
 
-			player.networkHandler.sendPacket(new CustomPayloadS2CPacket(MoreParticle.id, buf));
+			player.networkHandler.sendPacket(new CustomPayloadS2CPacket(new MoreParticlePayload(buf)));
 			return true;
 		} else return false;
 	}

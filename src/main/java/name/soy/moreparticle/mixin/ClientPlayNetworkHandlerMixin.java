@@ -1,56 +1,53 @@
 package name.soy.moreparticle.mixin;
 
 import name.soy.moreparticle.MoreParticle;
+import name.soy.moreparticle.MoreParticlePayload;
 import name.soy.moreparticle.client.MoreParticleClient;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientCommonNetworkHandler;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientCommonPacketListener;
 import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.util.math.random.Random;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.io.IOException;
 import java.util.HashSet;
 
-@Mixin(ClientPlayNetworkHandler.class)
-public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketListener {
+@Mixin(ClientCommonNetworkHandler.class)
+public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacketListener {
 
 	@Final
 	@Shadow
-	private MinecraftClient client;
+	protected MinecraftClient client;
 
 
-	@Shadow
 	public abstract ClientWorld getWorld();
 
-	@Shadow
 	@Final
 	private Random random;
 
-	@Shadow
 	public abstract void onParticle(ParticleS2CPacket packet);
 
-	@Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
+	@Inject(method = "onCustomPayload(Lnet/minecraft/network/packet/s2c/common/CustomPayloadS2CPacket;)V", at = @At("HEAD"), cancellable = true)
 	private void onCustomPayload(CustomPayloadS2CPacket payload, CallbackInfo ci) {
-		if (payload.getChannel().equals(MoreParticle.id)) {
+		NetworkThreadUtils.forceMainThread(payload, this, client);
+		if (payload.payload() instanceof MoreParticlePayload mpp) {
 			ci.cancel();
-			PacketByteBuf buf = payload.getData();
+			PacketByteBuf buf = mpp.buf();
 			int action = buf.readInt();
 			if (action == -1) {
 				if (MoreParticleClient.noParticle) return;
 
-				NetworkThreadUtils.forceMainThread(payload, this, client);
 				var count = buf.readInt();
 				for (int i = 0; i < count; i++) {
 					var packet = new ParticleS2CPacket(buf);
@@ -58,7 +55,6 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketL
 				}
 			} else if (action == 0) {
 				String tag = buf.readString();
-				NetworkThreadUtils.forceMainThread(payload, this, client);
 
 				ParticleS2CPacket packet = new ParticleS2CPacket(buf);
 				ClientWorldAccessor world = (ClientWorldAccessor) getWorld();

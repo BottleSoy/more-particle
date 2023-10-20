@@ -15,7 +15,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
@@ -54,7 +54,7 @@ public class MoreParticle implements ModInitializer {
 				bytes.writeInt(packets.size());
 				packets.forEach(packet -> packet.write(bytes));
 				packets.clear();
-				server.getPlayerManager().sendToAll(new CustomPayloadS2CPacket(id, bytes));
+				server.getPlayerManager().sendToAll(new CustomPayloadS2CPacket(new MoreParticlePayload(bytes)));
 			}
 		});
 	}
