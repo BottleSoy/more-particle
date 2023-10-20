@@ -1,19 +1,26 @@
 package name.soy.moreparticle.seq;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
+import name.soy.moreparticle.client.MoreParticleClient;
+import name.soy.moreparticle.lcolor.LifedColorTextureEffect;
+import name.soy.moreparticle.lcolor.LifedColoredParticle;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.minecraft.client.particle.AnimatedParticle;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleFactory;
-import net.minecraft.client.particle.SpriteProvider;
+import net.fabricmc.fabric.mixin.client.particle.ParticleManagerAccessor;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.Identifier;
 
 import java.util.Random;
 
 public class SeqParticle extends AnimatedParticle {
 
 	public static void register() {
-		ParticleFactoryRegistry.getInstance().register(SeqEffect.type, SeqParticle.Factory::new);
+		ParticleFactoryRegistry.getInstance().register(SeqEffect.type, Factory::new);
+		ParticleFactoryRegistry.getInstance().register(SeqTEffect.type, TFactory::new);
 	}
 
 	SeqEffect effect;
@@ -32,6 +39,11 @@ public class SeqParticle extends AnimatedParticle {
 		}
 		this.maxAge = new Random().nextInt(effect.random) + effect.age;
 		this.setSpriteForAge(spriteProvider);
+	}
+
+	@Override
+	public ParticleTextureSheet getType() {
+		return ParticleTextureSheet.PARTICLE_SHEET_LIT;
 	}
 
 	@Override
@@ -60,7 +72,9 @@ public class SeqParticle extends AnimatedParticle {
 				cz = effect.zlist.get(age);
 			}
 			if (age < effect.clist.size()) {
-				this.setColor(effect.clist.get(age));
+				val color = effect.clist.get(age);
+				this.setColor(color);
+				this.setAlpha(1 - (color >> 24) / 255F);
 			}
 			if (age < effect.alist.size()) {
 				this.scale = effect.alist.get(age);
@@ -75,6 +89,17 @@ public class SeqParticle extends AnimatedParticle {
 			lz = cz;
 		}
 
+	}
+
+	@Environment(EnvType.CLIENT)
+	@RequiredArgsConstructor
+	public static class TFactory implements ParticleFactory<SeqTEffect> {
+		private final SpriteProvider spriteProvider;
+
+		public Particle createParticle(SeqTEffect parameters, ClientWorld clientWorld, double x, double y, double z, double dx, double dy, double dz) {
+			SpriteProvider provider = ((ParticleManagerAccessor) MoreParticleClient.pm).getSpriteAwareFactories().get(new Identifier(parameters.texture));
+			return new SeqParticle(clientWorld, x, y, z, provider != null ? provider : spriteProvider, parameters);
+		}
 	}
 
 	@RequiredArgsConstructor

@@ -11,9 +11,11 @@
     "ServerWorldMixin"
   ],
   "client": [
+    "AnimatedParticleMixin",
     "ClientPlayNetworkHandlerMixin",
     "ClientWorldAccessor",
     "ParticleManagerMixin",
+    "ParticleMixin",
     "WorldRenderInvoker",
     "WorldRenderMixin"
   ],

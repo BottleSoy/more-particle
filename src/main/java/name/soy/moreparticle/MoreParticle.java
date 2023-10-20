@@ -6,20 +6,22 @@ import name.soy.moreparticle.calc.BestEffect;
 import name.soy.moreparticle.color.ColorEffect;
 import name.soy.moreparticle.command.KillParticleCommand;
 import name.soy.moreparticle.lcolor.LifedColorEffect;
+import name.soy.moreparticle.lcolor.LifedColorTextureEffect;
+import name.soy.moreparticle.life.LifeEndFireWorkEffect;
 import name.soy.moreparticle.life.LifeEndRodEffect;
 import name.soy.moreparticle.seq.SeqEffect;
-import name.soy.moreparticle.speed.DelayedEffect;
+import name.soy.moreparticle.seq.SeqTEffect;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +32,18 @@ public class MoreParticle implements ModInitializer {
 	public static final List<ParticleS2CPacket> packets = new ArrayList<>();
 	public static final Identifier id = new Identifier("soy", "more-particle");
 
+
+
 	@Override
 	public void onInitialize() {
 		ColorEffect.register();
 		BestEffect.register();
 		LifedColorEffect.register();
+		LifedColorTextureEffect.register();
+		LifeEndFireWorkEffect.register();
 		LifeEndRodEffect.register();
-		DelayedEffect.register();
 		SeqEffect.register();
+		SeqTEffect.register();
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			KillParticleCommand.register(dispatcher);
 		});
@@ -54,7 +60,7 @@ public class MoreParticle implements ModInitializer {
 	}
 
 	public static <T extends ParticleEffect> ParticleType<T> register(Identifier name, ParticleEffect.Factory<T> factory, final Function<ParticleType<T>, Codec<T>> function) {
-		return Registry.register(Registry.PARTICLE_TYPE, name, new ParticleType<T>(false, factory) {
+		return Registry.register(Registries.PARTICLE_TYPE, name, new ParticleType<T>(false, factory) {
 			public Codec<T> getCodec() {
 				return function.apply(this);
 			}

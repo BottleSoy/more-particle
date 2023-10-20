@@ -15,7 +15,7 @@ import net.minecraft.util.Identifier;
 public class LifeFireWorkParticle extends AnimatedParticle {
 
 	public static void register() {
-		ParticleFactoryRegistry.getInstance().register(LifeEndRodEffect.type, Factory::new);
+		ParticleFactoryRegistry.getInstance().register(LifeEndFireWorkEffect.type, Factory::new);
 	}
 
 	LifeEffect effect;

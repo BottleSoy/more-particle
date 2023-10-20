@@ -38,16 +38,19 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketL
 	@Final
 	private Random random;
 
-	@Shadow public abstract void onParticle(ParticleS2CPacket packet);
+	@Shadow
+	public abstract void onParticle(ParticleS2CPacket packet);
 
 	@Inject(method = "onCustomPayload", at = @At("HEAD"), cancellable = true)
 	private void onCustomPayload(CustomPayloadS2CPacket payload, CallbackInfo ci) {
 		if (payload.getChannel().equals(MoreParticle.id)) {
 			ci.cancel();
-			NetworkThreadUtils.forceMainThread(payload, this, client);
 			PacketByteBuf buf = payload.getData();
 			int action = buf.readInt();
 			if (action == -1) {
+				if (MoreParticleClient.noParticle) return;
+
+				NetworkThreadUtils.forceMainThread(payload, this, client);
 				var count = buf.readInt();
 				for (int i = 0; i < count; i++) {
 					var packet = new ParticleS2CPacket(buf);
@@ -55,6 +58,8 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketL
 				}
 			} else if (action == 0) {
 				String tag = buf.readString();
+				NetworkThreadUtils.forceMainThread(payload, this, client);
+
 				ParticleS2CPacket packet = new ParticleS2CPacket(buf);
 				ClientWorldAccessor world = (ClientWorldAccessor) getWorld();
 				WorldRenderInvoker render = (WorldRenderInvoker) world.getWorldRenderer();
@@ -99,8 +104,6 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketL
 						});
 					}
 				}
-
-
 			} else if (action == 1) {
 				String tag = buf.readString();
 				HashSet<Particle> removeparticles = MoreParticleClient.particleTags.remove(tag);
@@ -111,6 +114,8 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketL
 							particle.markDead();
 						}
 					}
+			} else if (action == 2) {
+				MoreParticleClient.pm.setWorld(MinecraftClient.getInstance().world);
 			}
 		}
 	}

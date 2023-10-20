@@ -33,6 +33,11 @@ public class LifeEndRodParticle extends AnimatedParticle {
 		this.setSpriteForAge(spriteProvider);
 	}
 
+	@Override
+	public ParticleTextureSheet getType() {
+		return ParticleTextureSheet.PARTICLE_SHEET_LIT;
+	}
+
 	public void move(double dx, double dy, double dz) {
 		this.setBoundingBox(this.getBoundingBox().offset(dx, dy, dz));
 		this.repositionFromBoundingBox();

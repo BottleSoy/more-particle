@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "more-particle",
-  "version": "1.4.0",
+  "version": "1.5.1",
   "name": "More Particle",
   "description": "",
   "icon": "icon.png",
@@ -9,7 +9,7 @@
   "contact": {
     "homepage": "https://soy-bottle.top/project/more-particle",
     "sources": "https://github.com/BottleSoy/more-particle",
-    "email": "git@soy-bottle.top"
+    "email": "soy@soy-bottle.top"
   },
   "license": "GPL",
   "environment": "*",
@@ -25,6 +25,7 @@
     "more-particle.mixins.json"
   ],
   "depends": {
-    "fabric": "*"
+    "fabric": "*",
+    "minecraft": ">=1.19.4"
   }
 }

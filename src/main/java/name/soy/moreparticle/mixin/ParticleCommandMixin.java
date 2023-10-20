@@ -1,5 +1,6 @@
 package name.soy.moreparticle.mixin;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -10,15 +11,16 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.netty.buffer.Unpooled;
 import name.soy.moreparticle.MoreParticle;
-import net.minecraft.block.CommandBlock;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.ParticleEffectArgumentType;
 import net.minecraft.command.argument.Vec3ArgumentType;
-import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ParticleCommand;
 import net.minecraft.server.command.ServerCommandSource;
@@ -26,8 +28,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,7 +44,7 @@ public class ParticleCommandMixin {
 
 
 	//force
-	@Redirect(method = "register", at =    @At(value = "INVOKE", ordinal = 0, target = "Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;then(Lcom/mojang/brigadier/builder/ArgumentBuilder;)Lcom/mojang/brigadier/builder/ArgumentBuilder;"))
+	@Redirect(method = "register", at = @At(value = "INVOKE", ordinal = 0, target = "Lcom/mojang/brigadier/builder/LiteralArgumentBuilder;then(Lcom/mojang/brigadier/builder/ArgumentBuilder;)Lcom/mojang/brigadier/builder/ArgumentBuilder;"))
 	private static ArgumentBuilder<ServerCommandSource, ?> beforeRegForce(LiteralArgumentBuilder<ServerCommandSource> instance, ArgumentBuilder<ServerCommandSource, ?> argumentBuilder) {
 		return instance.then(argumentBuilder.then(CommandManager.argument("tag", StringArgumentType.string())
 			.executes(context -> sendParticleWithTag(context, true))
@@ -80,7 +80,7 @@ public class ParticleCommandMixin {
 		if (i == 0) {
 			throw FAILED_EXCEPTION.create();
 		} else {
-			source.sendFeedback(Text.translatable("commands.particle.success", Registry.PARTICLE_TYPE.getId(parameters.getType()).toString()), true);
+			source.sendFeedback(Text.translatable("commands.particle.success", Registries.PARTICLE_TYPE.getId(parameters.getType()).toString()), true);
 			return i;
 		}
 	}
@@ -88,7 +88,7 @@ public class ParticleCommandMixin {
 
 	private static boolean sendTagParticleToPlayer(ServerWorld world, ServerPlayerEntity player, ParticleEffect parameters, boolean force, double x, double y, double z, int count, double dx, double dy, double dz, float speed, String tag) {
 		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-		Packet<?> packet = new ParticleS2CPacket(parameters, force, x, y, z, (float) dx, (float) dy, (float) dz, (float) speed, count);
+		Packet<ClientPlayPacketListener> packet = new ParticleS2CPacket(parameters, force, x, y, z, (float) dx, (float) dy, (float) dz, (float) speed, count);
 
 		buf.writeInt(0);
 		buf.writeString(tag);

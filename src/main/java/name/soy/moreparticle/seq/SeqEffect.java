@@ -150,16 +150,16 @@ public class SeqEffect implements ParticleEffect, Serializable {
 		return toString();
 	}
 
-	private static void writeFloatArray(PacketByteBuf buf, List<Float> floats) {
+	public static void writeFloatArray(PacketByteBuf buf, List<Float> floats) {
 		buf.writeVarInt(floats.size());
 		for (float f : floats) {
 			buf.writeFloat(f);
 		}
 	}
 
-	private static List<Float> readFloatArray(PacketByteBuf buf) {
+	public static List<Float> readFloatArray(PacketByteBuf buf) {
 		int size = buf.readVarInt();
-		List<Float> d = new ArrayList<>();
+		List<Float> d = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			d.add(buf.readFloat());
 		}
@@ -175,7 +175,7 @@ public class SeqEffect implements ParticleEffect, Serializable {
 
 	public static List<Integer> readIntArray(PacketByteBuf buf) {
 		int size = buf.readVarInt();
-		List<Integer> d = new ArrayList<>();
+		List<Integer> d = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			d.add(buf.readInt());
 		}
@@ -191,7 +191,7 @@ public class SeqEffect implements ParticleEffect, Serializable {
 
 	public static List<Double> readDoubleArray(PacketByteBuf buf) {
 		int size = buf.readVarInt();
-		List<Double> d = new ArrayList<>();
+		List<Double> d = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			d.add(buf.readDouble());
 		}

@@ -40,8 +40,13 @@ public class KillParticleCommand {
 	public static void killParicle(Collection<ServerPlayerEntity> players, String tag) {
 		players.forEach(player -> {
 			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-			buf.writeInt(1);
-			buf.writeString(tag);
+			if (tag == null) {
+				buf.writeInt(2);
+			} else {
+				buf.writeInt(1);
+				buf.writeString(tag);
+			}
+
 			player.networkHandler.sendPacket(new CustomPayloadS2CPacket(MoreParticle.id, buf));
 		});
 	}
