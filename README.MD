@@ -35,7 +35,7 @@ particle <name> [<pos>] [<delta>] <speed> <count> [force|normal] [viewers] [tag]
 ```cmd
 soy:best <xExp: string> <yExp: string> <zExp: string> <life: int> <random: int> <colorExp: string>
 e.g.
-particle soy:best 'sin(t/20)' '0' 'cos(t/20)' 20 5 '16711680' ~ ~1 ~ 0 0 0 0 1 force @a
+particle soy:best 'sin(t/20*2*pi)' '0' 'cos(t/20*2*pi)' 20 5 '16711680' ~ ~1 ~ 0 0 0 0 1 force @a
 此命令会生成一个做圆周运动的红色粒子
 ```
 
