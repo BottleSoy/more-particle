@@ -11,7 +11,9 @@ version = project.mod_version
 group = project.maven_group
 
 dependencies {
+
     include 'net.objecthunter:exp4j:0.4.8'
+    implementation 'com.mojang:brigadier:1.0.18'
     implementation 'net.objecthunter:exp4j:0.4.8'
     implementation 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
@@ -43,7 +45,7 @@ tasks.withType(JavaCompile) {
 // if it is present.
 // If you remove this task, sources will not be generated.
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
+//    classifier = "sources"
     from sourceSets.main.allSource
 }
 

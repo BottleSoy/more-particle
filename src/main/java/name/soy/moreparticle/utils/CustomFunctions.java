@@ -46,6 +46,20 @@ public class CustomFunctions {
                 return Math.toRadians(args[0]);
             }
         });
+        funcs.add(new Function("random", 2) {
+            @Override
+            public double apply(double... args) {
+                return args[0] + Math.random() * (args[1] - args[0]);
+            }
+        });
+        funcs.add(new Function("randoms", 2)
+        {
+            // 静态随机常量，直到ParticleEffect被GC回收每次计算结果都一样
+            @Override
+            public double apply(double... args) {
+                return args[0] + Math.random() * (args[1] - args[0]);
+            }
+        });
         funcs.add(new Function("and", 2) {
             @Override
             public double apply(double... args) {

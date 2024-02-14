@@ -80,4 +80,11 @@ soy:seq <xList> <yList> <zList> <life> <random> <colorList> <scaleList>
 soy:seq <xList> <yList> <zList> <life> <random> <colorList> <scaleList> <texture>
 ```
 
+### 表达式支持的函数
+```cmd
+min(x)
+max(x)
+sin(x)
+cos(x)
+```
 **文档由 [SnowyKami](https://github.com/snowykami) 提供**
