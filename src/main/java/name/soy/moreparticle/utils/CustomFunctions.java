@@ -64,13 +64,18 @@ public class CustomFunctions {
                 return args[0] != 0 || args[1] != 0 ? 1 : 0;
             }
         });
+        funcs.add(new Function("random", 2) {
+            @Override
+            public double apply(double... args) {
+                return Math.random() * (args[1] - args[0]) + args[0];
+            }
+        });
         funcs.add(new Function("rgb", 3) {
             @Override
             public double apply(double... args) {
                 return Math.round(args[0]) * 65536 + Math.round(args[1]) * 256 + Math.round(args[2]);
             }
         });
-
         funcs.add(new Function("hsb", 3) {
             @Override
             public double apply(double... args) {

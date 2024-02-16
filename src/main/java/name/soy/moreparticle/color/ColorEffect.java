@@ -29,7 +29,7 @@ public class ColorEffect implements ParticleEffect {
 	public static final Codec<ColorEffect> CODEC = RecordCodecBuilder.create(instance ->
 			instance.group(Codec.INT.fieldOf("color").forGetter(e -> e.color))
 					.apply(instance, ColorEffect::new));
-	public static final ParticleEffect.Factory<ColorEffect> PARAMETERS_FACTORY = new ParticleEffect.Factory<ColorEffect>() {
+	public static final Factory<ColorEffect> PARAMETERS_FACTORY = new Factory<ColorEffect>() {
 		public ColorEffect read(ParticleType<ColorEffect> particleType, StringReader stringReader) throws CommandSyntaxException {
 			stringReader.expect(' ');
 			return new ColorEffect(stringReader.readInt());
