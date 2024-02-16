@@ -2,6 +2,8 @@
 
 ## 在Minecraft中自定义粒子特效
 
+#### 封装：[MoreParticleAPI for python]()，这样你可以不用手打指令，也可以不用看这个文档了，直接调用库来生成好看的特效
+
 ### 命令文档
 
 所有命令均采用Minecraft原版Particle命令
