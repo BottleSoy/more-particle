@@ -12,7 +12,7 @@ import net.minecraft.client.world.ClientWorld;
 public class ColoredParticle extends AnimatedParticle {
 
 	public static void register() {
-		ParticleFactoryRegistry.getInstance().register(ColorEffect.type, ColoredParticle.Factory::new);
+		ParticleFactoryRegistry.getInstance().register(ColorEffect.type, Factory::new);
 	}
 
 	protected ColoredParticle(

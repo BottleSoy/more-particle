@@ -1,4 +1,4 @@
-//package name.soy.moreparticle.mixin;
+package name.soy.moreparticle.mixin;//package name.soy.moreparticle.mixin;
 //
 //import com.google.common.collect.Lists;
 //import lombok.val;

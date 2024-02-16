@@ -1,5 +1,6 @@
 package name.soy.moreparticle.mixin;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -9,6 +10,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.netty.buffer.Unpooled;
+import name.soy.moreparticle.MoreParticle;
 import name.soy.moreparticle.MoreParticlePayload;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.ParticleEffectArgumentType;

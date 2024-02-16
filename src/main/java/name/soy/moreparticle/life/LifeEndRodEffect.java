@@ -27,7 +27,7 @@ public class LifeEndRodEffect extends LifeEffect {
                     Codec.INT.fieldOf("base").forGetter((gravity) -> gravity.base),
                     Codec.INT.fieldOf("random").forGetter((gravity) -> gravity.random)
             ).apply(instance, LifeEndRodEffect::new));
-    public static final ParticleEffect.Factory<LifeEndRodEffect> PARAMETERS_FACTORY = new ParticleEffect.Factory<LifeEndRodEffect>() {
+    public static final Factory<LifeEndRodEffect> PARAMETERS_FACTORY = new Factory<LifeEndRodEffect>() {
         public LifeEndRodEffect read(ParticleType<LifeEndRodEffect> particleType, StringReader stringReader) throws CommandSyntaxException {
             stringReader.expect(' ');
             int base = stringReader.readInt();
