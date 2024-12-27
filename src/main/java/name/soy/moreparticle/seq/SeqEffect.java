@@ -41,7 +41,6 @@ public class SeqEffect implements ParticleOptions, Serializable {
 			buf.writeVarInt(effect.age);
 			buf.writeVarInt(effect.random);
 			writeIntArray(buf, effect.clist);
-
 			writeFloatArray(buf, effect.alist);
 			writeIntArray(buf, effect.light);
 		}
@@ -67,15 +66,15 @@ public class SeqEffect implements ParticleOptions, Serializable {
 			Codec.INT.fieldOf("random").orElse(1).forGetter(e -> e.random),
 			Codec.list(Codec.INT).fieldOf("clist").orElse(List.of(16777215)).forGetter(e -> e.clist),
 			Codec.list(Codec.FLOAT).fieldOf("alist").orElse(List.of(0.2f * 0.75f)).forGetter(e -> e.alist),
-			Codec.list(Codec.INT).fieldOf("light").orElse(List.of(16777215)).forGetter(e -> e.light)
+			Codec.list(Codec.INT).fieldOf("light").orElse(List.of(15728880)).forGetter(e -> e.light)
 		).apply(instance, SeqEffect::new)
 	);
 
-	List<Double> xlist, ylist, zlist;
-	int age, random;
-	List<Integer> clist;
-	List<Float> alist;
-	List<Integer> light;
+	public List<Double> xlist, ylist, zlist;
+	public int age, random;
+	public List<Integer> clist;
+	public List<Float> alist;
+	public List<Integer> light;
 
 	@Override
 	public @NotNull ParticleType<?> getType() {

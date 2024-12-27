@@ -45,6 +45,7 @@ public class SeqVParticle extends SeqParticle {
 		if (age < this.angleZ.size()) {
 			this.az = angleZ.get(age);
 		}
+
 	}
 
 	@Override
@@ -85,13 +86,15 @@ public class SeqVParticle extends SeqParticle {
 			if (age < effect.alist.size()) {
 				this.quadSize = effect.alist.get(age);
 			}
+			if (age < effect.light.size()) {
+				this.lightColor = effect.light.get(age);
+			}
 			float cAx, cAy, cAz;
 			if (age >= angleX.size()) {
 				cAx = lAx;
 			} else {
 				cAx = angleX.get(age);
 			}
-
 			if (age >= angleY.size()) {
 				cAy = lAy;
 			} else {
@@ -102,7 +105,6 @@ public class SeqVParticle extends SeqParticle {
 			} else {
 				cAz = angleZ.get(age);
 			}
-
 			xd = cx - lx;
 			yd = cy - ly;
 			zd = cz - lz;

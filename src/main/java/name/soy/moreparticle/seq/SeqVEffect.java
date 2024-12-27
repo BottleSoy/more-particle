@@ -27,10 +27,10 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 	boolean relative;//是否相对于玩家视角旋转
 
 	public SeqVEffect(List<Double> xlist, List<Double> ylist, List<Double> zlist,
-	                  int age, int random, List<Integer> clist, List<Float> alist, String texture, List<Integer> light,
+	                  int age, int random, List<Integer> clist, List<Float> alist, List<Integer> light, String texture,
 	                  List<Float> angleX, List<Float> angleY, List<Float> angleZ, boolean relative
 	) {
-		super(xlist, ylist, zlist, age, random, clist, alist, texture, light);
+		super(xlist, ylist, zlist, age, random, clist, alist, light, texture);
 		this.angleX = angleX;
 		this.angleY = angleY;
 		this.angleZ = angleZ;
@@ -56,8 +56,8 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 			buf.writeVarInt(effect.random);
 			writeIntArray(buf, effect.clist);
 			writeFloatArray(buf, effect.alist);
-			buf.writeUtf(effect.texture);
 			writeIntArray(buf, effect.light);
+			buf.writeUtf(effect.texture);
 			writeFloatArray(buf, effect.angleX);
 			writeFloatArray(buf, effect.angleY);
 			writeFloatArray(buf, effect.angleZ);
@@ -73,8 +73,8 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 				buf.readVarInt(), buf.readVarInt(),
 				readIntArray(buf),
 				readFloatArray(buf),
-				buf.readUtf(),
 				readIntArray(buf),
+				buf.readUtf(),
 				readFloatArray(buf),
 				readFloatArray(buf),
 				readFloatArray(buf),
@@ -91,8 +91,8 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 			Codec.INT.fieldOf("random").orElse(1).forGetter(e -> e.random),
 			Codec.list(Codec.INT).fieldOf("clist").orElse(List.of(16777215)).forGetter(e -> e.clist),
 			Codec.list(Codec.FLOAT).fieldOf("alist").orElse(List.of(0.2f * 0.75f)).forGetter(e -> e.alist),
+			Codec.list(Codec.INT).fieldOf("light").orElse(List.of(15728880)).forGetter(e -> e.light),
 			Codec.STRING.fieldOf("texture").orElse("").forGetter(e -> e.texture),
-			Codec.list(Codec.INT).fieldOf("light").orElse(List.of(16777215)).forGetter(e -> e.light),
 			Codec.list(Codec.FLOAT).fieldOf("angleX").orElse(List.of(0f)).forGetter(e -> e.angleX),
 			Codec.list(Codec.FLOAT).fieldOf("angleY").orElse(List.of(0f)).forGetter(e -> e.angleY),
 			Codec.list(Codec.FLOAT).fieldOf("angleZ").orElse(List.of(0f)).forGetter(e -> e.angleZ),

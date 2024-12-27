@@ -42,12 +42,11 @@ public class SeqTEffect extends SeqEffect implements ParticleOptions, Serializab
 			Codec.INT.fieldOf("random").forGetter(e -> e.random),
 			Codec.list(Codec.INT).fieldOf("clist").forGetter(e -> e.clist),
 			Codec.list(Codec.FLOAT).fieldOf("alist").forGetter(e -> e.alist),
-			Codec.STRING.fieldOf("texture").forGetter(e -> e.texture),
-			Codec.list(Codec.INT).fieldOf("light").forGetter(e -> e.light)
-
+			Codec.list(Codec.INT).orElse(List.of(15728880)).fieldOf("light").forGetter(e -> e.light),
+			Codec.STRING.fieldOf("texture").forGetter(e -> e.texture)
 			).apply(instance, SeqTEffect::new));
 
-	public SeqTEffect(List<Double> xlist, List<Double> ylist, List<Double> zlist, int age, int random, List<Integer> clist, List<Float> alist, String texture, List<Integer> light) {
+	public SeqTEffect(List<Double> xlist, List<Double> ylist, List<Double> zlist, int age, int random, List<Integer> clist, List<Float> alist, List<Integer> light, String texture) {
 		super(xlist, ylist, zlist, age, random, clist, alist, light);
 		this.texture = texture;
 	}
@@ -64,8 +63,8 @@ public class SeqTEffect extends SeqEffect implements ParticleOptions, Serializab
 			buf.writeVarInt(effect.random);
 			writeIntArray(buf, effect.clist);
 			writeFloatArray(buf, effect.alist);
-			buf.writeUtf(effect.texture);
 			writeIntArray(buf,effect.light);
+			buf.writeUtf(effect.texture);
 		}
 
 		@Override
@@ -77,34 +76,11 @@ public class SeqTEffect extends SeqEffect implements ParticleOptions, Serializab
 				buf.readVarInt(), buf.readVarInt(),
 				readIntArray(buf),
 				readFloatArray(buf),
-				buf.readUtf(),
-				readIntArray(buf)
+				readIntArray(buf),
+				buf.readUtf()
 			);
 		}
 	};
-//	public static final Factory<SeqTEffect> PARAMETERS_FACTORY = new Factory<>() {
-//		public SeqTEffect read(ParticleType<SeqTEffect> particleType, StringReader stringReader) throws CommandSyntaxException {
-//			stringReader.expect(' ');
-//			stringReader.expect('\'');
-//			String base64 = stringReader.readStringUntil('\'');
-//			byte[] data = Base64.getDecoder().decode(base64);
-//			ByteBuf buf = Unpooled.wrappedBuffer(data);
-//			return read(type, new PacketByteBuf(buf));
-//		}
-//
-//		public SeqTEffect read(ParticleType<SeqTEffect> particleType, PacketByteBuf buf) {
-//			return new SeqTEffect(
-//				readDoubleArray(buf),
-//				readDoubleArray(buf),
-//				readDoubleArray(buf),
-//				buf.readVarInt(), buf.readVarInt(),
-//				readIntArray(buf),
-//				readFloatArray(buf),
-//				buf.readString()
-//			);
-//		}
-//	};
-
 
 	@Override
 	public @NotNull ParticleType<?> getType() {

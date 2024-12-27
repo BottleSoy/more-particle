@@ -26,7 +26,7 @@ public class SeqParticle extends TextureSheetParticle {
 	SeqEffect effect;
 
 	public double lx = 0, ly = 0, lz = 0;
-	private int lightColor;
+	public int lightColor;
 
 	protected SeqParticle(ClientLevel world, double x, double y, double z, SpriteSet spriteProvider, SeqEffect parameters) {
 		super(world, x, y, z);
@@ -51,6 +51,9 @@ public class SeqParticle extends TextureSheetParticle {
 		this.move(cx, cy, cz);
 		this.lifetime = new Random().nextInt(effect.random) + effect.age;
 		this.sprites = spriteProvider;
+		if (age < effect.light.size()) {
+			this.lightColor = effect.light.get(age);
+		}
 		this.setSpriteFromAge(this.sprites);
 	}
 
