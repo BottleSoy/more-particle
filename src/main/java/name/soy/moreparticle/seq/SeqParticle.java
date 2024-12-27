@@ -16,6 +16,7 @@ import java.util.Random;
 
 public class SeqParticle extends TextureSheetParticle {
 
+
 	public static void register() {
 		ParticleFactoryRegistry.getInstance().register(SeqEffect.type, Provider::new);
 		ParticleFactoryRegistry.getInstance().register(SeqTEffect.type, TProvider::new);
@@ -25,6 +26,7 @@ public class SeqParticle extends TextureSheetParticle {
 	SeqEffect effect;
 
 	public double lx = 0, ly = 0, lz = 0;
+	private int lightColor;
 
 	protected SeqParticle(ClientLevel world, double x, double y, double z, SpriteSet spriteProvider, SeqEffect parameters) {
 		super(world, x, y, z);
@@ -85,6 +87,9 @@ public class SeqParticle extends TextureSheetParticle {
 			if (age < effect.alist.size()) {
 				this.quadSize = effect.alist.get(age);
 			}
+			if (age < effect.light.size()) {
+				this.lightColor = effect.light.get(age);
+			}
 			xd = cx - lx;
 			yd = cy - ly;
 			zd = cz - lz;
@@ -102,6 +107,11 @@ public class SeqParticle extends TextureSheetParticle {
 		float g = (float) ((i & 0xFF00) >> 8) / 255.0F;
 		float h = (float) ((i & 0xFF) >> 0) / 255.0F;
 		this.setColor(f, g, h);
+	}
+
+	@Override
+	protected int getLightColor(float f) {
+		return lightColor;
 	}
 
 	@Override

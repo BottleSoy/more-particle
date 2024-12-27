@@ -1,5 +1,6 @@
 package name.soy.moreparticle.seq;
 
+import com.mojang.datafixers.Products;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -30,7 +31,8 @@ public class SeqEffect implements ParticleOptions, Serializable {
 			(particleType) -> SeqEffect.CODEC
 		);
 	}
-	public static final StreamCodec<RegistryFriendlyByteBuf, SeqEffect> STREAM_CODEC = new StreamCodec<>(){
+
+	public static final StreamCodec<RegistryFriendlyByteBuf, SeqEffect> STREAM_CODEC = new StreamCodec<>() {
 		@Override
 		public void encode(RegistryFriendlyByteBuf buf, SeqEffect effect) {
 			writeDoubleArray(buf, effect.xlist);
@@ -39,7 +41,9 @@ public class SeqEffect implements ParticleOptions, Serializable {
 			buf.writeVarInt(effect.age);
 			buf.writeVarInt(effect.random);
 			writeIntArray(buf, effect.clist);
+
 			writeFloatArray(buf, effect.alist);
+			writeIntArray(buf, effect.light);
 		}
 
 		@Override
@@ -50,31 +54,31 @@ public class SeqEffect implements ParticleOptions, Serializable {
 				readDoubleArray(buf),
 				buf.readVarInt(), buf.readVarInt(),
 				readIntArray(buf),
-				readFloatArray(buf)
+				readFloatArray(buf),
+				readIntArray(buf)
 			);
 		}
 	};
-	public static final MapCodec<SeqEffect> CODEC = RecordCodecBuilder.mapCodec(instance ->
-		instance.group(
+	public static final MapCodec<SeqEffect> CODEC = RecordCodecBuilder.mapCodec((RecordCodecBuilder.Instance<SeqEffect> instance) -> instance.group(
 			Codec.list(Codec.DOUBLE).fieldOf("xlist").forGetter(e -> e.xlist),
 			Codec.list(Codec.DOUBLE).fieldOf("ylist").forGetter(e -> e.ylist),
 			Codec.list(Codec.DOUBLE).fieldOf("zlist").forGetter(e -> e.zlist),
 			Codec.INT.fieldOf("age").forGetter(e -> e.age),
 			Codec.INT.fieldOf("random").orElse(1).forGetter(e -> e.random),
 			Codec.list(Codec.INT).fieldOf("clist").orElse(List.of(16777215)).forGetter(e -> e.clist),
-			Codec.list(Codec.FLOAT).fieldOf("alist").orElse(List.of(1f)).forGetter(e -> e.alist)
+			Codec.list(Codec.FLOAT).fieldOf("alist").orElse(List.of(0.2f * 0.75f)).forGetter(e -> e.alist),
+			Codec.list(Codec.INT).fieldOf("light").orElse(List.of(16777215)).forGetter(e -> e.light)
 		).apply(instance, SeqEffect::new)
 	);
 
 	List<Double> xlist, ylist, zlist;
 	int age, random;
 	List<Integer> clist;
-
 	List<Float> alist;
-
+	List<Integer> light;
 
 	@Override
-	public ParticleType<?> getType() {
+	public @NotNull ParticleType<?> getType() {
 		return type;
 	}
 

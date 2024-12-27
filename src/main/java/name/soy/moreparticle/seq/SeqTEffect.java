@@ -28,7 +28,7 @@ public class SeqTEffect extends SeqEffect implements ParticleOptions, Serializab
 	public static ParticleType<SeqTEffect> type;
 
 	public static void register() {
-		type = MoreParticle.register( ResourceLocation.fromNamespaceAndPath("soy", "seqt"),
+		type = MoreParticle.register(ResourceLocation.fromNamespaceAndPath("soy", "seqt"),
 			(particleType) -> SeqTEffect.STREAM_CODEC,
 			(particleType) -> SeqTEffect.CODEC);
 	}
@@ -42,15 +42,18 @@ public class SeqTEffect extends SeqEffect implements ParticleOptions, Serializab
 			Codec.INT.fieldOf("random").forGetter(e -> e.random),
 			Codec.list(Codec.INT).fieldOf("clist").forGetter(e -> e.clist),
 			Codec.list(Codec.FLOAT).fieldOf("alist").forGetter(e -> e.alist),
-			Codec.STRING.fieldOf("texture").forGetter(e -> e.texture)).apply(instance, SeqTEffect::new));
+			Codec.STRING.fieldOf("texture").forGetter(e -> e.texture),
+			Codec.list(Codec.INT).fieldOf("light").forGetter(e -> e.light)
 
-	public SeqTEffect(List<Double> xlist, List<Double> ylist, List<Double> zlist, int age, int random, List<Integer> clist, List<Float> alist, String texture) {
-		super(xlist, ylist, zlist, age, random, clist, alist);
+			).apply(instance, SeqTEffect::new));
+
+	public SeqTEffect(List<Double> xlist, List<Double> ylist, List<Double> zlist, int age, int random, List<Integer> clist, List<Float> alist, String texture, List<Integer> light) {
+		super(xlist, ylist, zlist, age, random, clist, alist, light);
 		this.texture = texture;
 	}
 
 	public String texture;
-	public static final StreamCodec<RegistryFriendlyByteBuf, SeqTEffect> STREAM_CODEC = new StreamCodec<>(){
+	public static final StreamCodec<RegistryFriendlyByteBuf, SeqTEffect> STREAM_CODEC = new StreamCodec<>() {
 
 		@Override
 		public void encode(RegistryFriendlyByteBuf buf, SeqTEffect effect) {
@@ -62,6 +65,7 @@ public class SeqTEffect extends SeqEffect implements ParticleOptions, Serializab
 			writeIntArray(buf, effect.clist);
 			writeFloatArray(buf, effect.alist);
 			buf.writeUtf(effect.texture);
+			writeIntArray(buf,effect.light);
 		}
 
 		@Override
@@ -73,7 +77,8 @@ public class SeqTEffect extends SeqEffect implements ParticleOptions, Serializab
 				buf.readVarInt(), buf.readVarInt(),
 				readIntArray(buf),
 				readFloatArray(buf),
-				buf.readUtf()
+				buf.readUtf(),
+				readIntArray(buf)
 			);
 		}
 	};
