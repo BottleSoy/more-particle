@@ -2,26 +2,22 @@ package name.soy.moreparticle.mixin;
 
 import name.soy.moreparticle.MoreParticle;
 import name.soy.moreparticle.MoreParticlePayload;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(CustomPayloadS2CPacket.class)
+@Mixin(targets = "net.minecraft.network.protocol.common.custom.CustomPacketPayload$1")
 public class CustomPayloadS2CPacketMixin {
-	@Inject(method = "readPayload", at = @At("HEAD"), cancellable = true)
-	private static void readMPP(Identifier id, PacketByteBuf buf, CallbackInfoReturnable<CustomPayload> cir) {
-		if (id.equals(MoreParticle.id)) {
-			cir.setReturnValue(new MoreParticlePayload(buf));
+	@Inject(method = "findCodec", at = @At("RETURN"), cancellable = true)
+	private <B extends FriendlyByteBuf> void addMPP(ResourceLocation resourceLocation, CallbackInfoReturnable<StreamCodec<? super B, ? extends CustomPacketPayload>> cir) {
+		System.out.println(cir.getReturnValue());
+		if (resourceLocation.equals(MoreParticle.id)) {
+			cir.setReturnValue((StreamCodec<? super B, ? extends CustomPacketPayload>) MoreParticlePayload.STREAM_CODEC);
 		}
 	}
-
-//	@ModifyConstant(method = "<init>(Lnet/minecraft/util/Identifier;Lnet/minecraft/network/PacketByteBuf;)V", constant = @Constant(intValue = 0x100000))
-//	private int toMax2(int constant) {
-//		return Integer.MAX_VALUE;
-//	}
 }

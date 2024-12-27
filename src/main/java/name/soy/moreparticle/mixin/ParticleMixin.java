@@ -8,4 +8,5 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Particle.class)
 public class ParticleMixin {
+
 }

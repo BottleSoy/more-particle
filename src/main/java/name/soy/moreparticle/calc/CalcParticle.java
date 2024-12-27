@@ -3,28 +3,30 @@ package name.soy.moreparticle.calc;
 import lombok.RequiredArgsConstructor;
 import name.soy.moreparticle.utils.CustomFunctions;
 import name.soy.moreparticle.utils.CustomOperators;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.minecraft.client.particle.AnimatedParticle;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleFactory;
-import net.minecraft.client.particle.SpriteProvider;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SimpleAnimatedParticle;
+import net.minecraft.client.particle.SpriteSet;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
 import java.util.Random;
-
-public class BestParticle extends AnimatedParticle {
+@Environment(EnvType.CLIENT)
+public class CalcParticle extends SimpleAnimatedParticle {
 
     public static void register() {
-        ParticleFactoryRegistry.getInstance().register(BestEffect.type, Factory::new);
+        ParticleFactoryRegistry.getInstance().register(CalcEffect.type, Factory::new);
     }
 
     public Expression xfun, yfun, zfun, cfun;
     public double lx = 0, ly = 0, lz = 0;
 
-    protected BestParticle(ClientWorld world, double x, double y, double z,
-                           SpriteProvider spriteProvider,
+    protected CalcParticle(ClientLevel world, double x, double y, double z,
+                           SpriteSet spriteProvider,
                            String xfun, String yfun, String zfun,
                            int age, int random, String cfun) {
         super(world, x, y, z, spriteProvider, 0.005f);
@@ -32,22 +34,23 @@ public class BestParticle extends AnimatedParticle {
         this.yfun = new ExpressionBuilder(yfun).operator(CustomOperators.operators).functions(CustomFunctions.funcs).variables("t").build();
         this.zfun = new ExpressionBuilder(zfun).operator(CustomOperators.operators).functions(CustomFunctions.funcs).variables("t").build();
         this.cfun = new ExpressionBuilder(cfun).operator(CustomOperators.operators).functions(CustomFunctions.funcs).variables("t").build();
-        this.collidesWithWorld = false;
+
+        this.hasPhysics = false;
         this.setColor((int) this.cfun.setVariable("t", 0).evaluate());
-        this.maxAge = new Random().nextInt(random) + age;
-        this.setSpriteForAge(spriteProvider);
+        this.lifetime = new Random().nextInt(random) + age;
+        this.setSpriteFromAge(spriteProvider);
 
     }
 
     @Override
     public void tick() {
-        this.prevPosX = this.x;
-        this.prevPosY = this.y;
-        this.prevPosZ = this.z;
-        if (this.age++ >= this.maxAge) {
-            this.markDead();
+        this.xo = this.x;
+        this.yo = this.y;
+        this.zo = this.z;
+        if (this.age++ >= this.lifetime) {
+            this.remove();
         } else {
-            this.setSpriteForAge(this.spriteProvider);
+            this.setSpriteFromAge(this.sprites);
             double cx, cy, cz;
 //			try {
 //				this.setColor(fc.get().intValue());
@@ -66,10 +69,10 @@ public class BestParticle extends AnimatedParticle {
                 return;
             }
 
-            velocityX = cx - lx;
-            velocityY = cy - ly;
-            velocityZ = cz - lz;
-            this.move(this.velocityX, this.velocityY, this.velocityZ);
+            xd = cx - lx;
+            yd = cy - ly;
+            zd = cz - lz;
+            this.move(this.xd, this.yd, this.zd);
             lx = cx;
             ly = cy;
             lz = cz;
@@ -81,12 +84,12 @@ public class BestParticle extends AnimatedParticle {
     }
 
     @RequiredArgsConstructor
-    public static class Factory implements ParticleFactory<BestEffect> {
-        private final SpriteProvider spriteProvider;
+    public static class Factory implements ParticleProvider<CalcEffect> {
+        private final SpriteSet spriteProvider;
 
         @Override
-        public Particle createParticle(BestEffect parameters, ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-            return new BestParticle(world, x, y, z, spriteProvider, parameters.xfun, parameters.yfun, parameters.zfun, parameters.age, parameters.random, parameters.cfun);
+        public Particle createParticle(CalcEffect parameters, ClientLevel world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+            return new CalcParticle(world, x, y, z, spriteProvider, parameters.xfun, parameters.yfun, parameters.zfun, parameters.age, parameters.random, parameters.cfun);
         }
     }
 }

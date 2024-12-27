@@ -1,27 +1,26 @@
 package name.soy.moreparticle;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import io.netty.buffer.Unpooled;
-import name.soy.moreparticle.calc.BestEffect;
-import name.soy.moreparticle.color.ColorEffect;
+import name.soy.moreparticle.calc.CalcEffect;
 import name.soy.moreparticle.command.KillParticleCommand;
-import name.soy.moreparticle.lcolor.LifedColorEffect;
-import name.soy.moreparticle.lcolor.LifedColorTextureEffect;
-import name.soy.moreparticle.life.LifeEndFireWorkEffect;
-import name.soy.moreparticle.life.LifeEndRodEffect;
 import name.soy.moreparticle.seq.SeqEffect;
 import name.soy.moreparticle.seq.SeqTEffect;
+import name.soy.moreparticle.seq.SeqVEffect;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.fabricmc.fabric.impl.networking.CustomPayloadTypeProvider;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
+import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,41 +28,46 @@ import java.util.function.Function;
 
 
 public class MoreParticle implements ModInitializer {
-	public static final List<ParticleS2CPacket> packets = new ArrayList<>();
-	public static final Identifier id = new Identifier("soy", "more-particle");
-
+	public static final List<ClientboundLevelParticlesPacket> packets = new ArrayList<>();
+	public static final ResourceLocation id = ResourceLocation.fromNamespaceAndPath("soy", "more-particle");
 
 
 	@Override
 	public void onInitialize() {
-		ColorEffect.register();
-		BestEffect.register();
-		LifedColorEffect.register();
-		LifedColorTextureEffect.register();
-		LifeEndFireWorkEffect.register();
-		LifeEndRodEffect.register();
+		CalcEffect.register();
 		SeqEffect.register();
 		SeqTEffect.register();
+		SeqVEffect.register();
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			KillParticleCommand.register(dispatcher);
 		});
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			if (!packets.isEmpty()) {
-				var bytes = new PacketByteBuf(Unpooled.buffer());
+				RegistryFriendlyByteBuf bytes = RegistryFriendlyByteBuf.decorator(server.registryAccess()).apply(Unpooled.buffer());
 				bytes.writeInt(-1);
 				bytes.writeInt(packets.size());
-				packets.forEach(packet -> packet.write(bytes));
+				packets.forEach(packet -> ClientboundLevelParticlesPacket.STREAM_CODEC.encode(bytes, packet));
 				packets.clear();
-				server.getPlayerManager().sendToAll(new CustomPayloadS2CPacket(new MoreParticlePayload(bytes)));
+				server.getPlayerList().broadcastAll(new ClientboundCustomPayloadPacket(new MoreParticlePayload(bytes)));
 			}
 		});
 	}
 
-	public static <T extends ParticleEffect> ParticleType<T> register(Identifier name, ParticleEffect.Factory<T> factory, final Function<ParticleType<T>, Codec<T>> function) {
-		return Registry.register(Registries.PARTICLE_TYPE, name, new ParticleType<T>(false, factory) {
-			public Codec<T> getCodec() {
-				return function.apply(this);
+	public static <T extends ParticleOptions> ParticleType<T> register(
+		ResourceLocation name,
+		final Function<ParticleType<T>, StreamCodec<? super RegistryFriendlyByteBuf, T>> stream,
+		final Function<ParticleType<T>, MapCodec<T>> text) {
+		ParticleType<T> type = new ParticleType<>(true) {
+			@Override @NotNull
+			public MapCodec<T> codec() {
+				return text.apply(this);
 			}
-		});
+
+			@Override @NotNull
+			public StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec() {
+				return stream.apply(this);
+			}
+		};
+		return Registry.register(BuiltInRegistries.PARTICLE_TYPE, name, type);
 	}
 }

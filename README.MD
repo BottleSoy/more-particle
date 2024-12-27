@@ -4,80 +4,81 @@
 
 ### 命令文档
 
-所有命令均采用Minecraft原版Particle命令
+粒子生成命令均采用Minecraft原版particle命令
 
-```cmd
-particle <name> [<pos>] [<delta>] <speed> <count> [force|normal] [viewers] [tag]
+``` mclang
+particle <name>{<NBT>} [<pos>] [<delta>] <speed> <count> [force|normal] [viewers] [tag]
 ```
 
 - 所有自定义粒子通过<name>字段自定义
 - **force**参数请务必填入，避免部分情况下不显示的问题
-- 计时单位统一为`tick`, 正常情况下`1t=0.05sec`
-- 若粒子量过大，可能会导致老年粒子提前消失，建议配合瓶子的解除上限模组使用
+- 计时单位统一为`tick`, 正常情况下`1t=0.05s`
+- 若粒子量过大，可能会导致老年粒子提前消失，建议配解除粒子上限模组使用
+- tag是用于定义粒子的标签的，配合`killparticle`命令使用
 
-- 数据类型解释:
-    - `int`: 整数类型参数
-    - `number`: 整数，浮点数均可
-    - `string`: 字符串参数，需要用单引号包裹
+### killparticle 清除粒子命令
 
-- 参数解释:
-    - `x/y/zExp: [string]`: 表达式，可以是一个数值，也可以是一个标准数学表达式，函数自变量支持`t`
-      ，为粒子出生起到当前的时间，例如`'114514'`,`'sin(t)'`,`'if(t<20,t*3,t/2)'`
-    - `life: int`: 粒子的持续时间tick
-    - `random: int`: 粒子持续时间的随机附加值，**该参数值最小必须为1**
-    - `colorExp: string`: 颜色表达式，RGB十进制整数值，例如红色(`#FF0000`)则应该输入字符串`'16711680'`
-    - `color: int`: 颜色十进制整数值，例如红色(`#FF0000`)则应该输入`16711680`
-    - `x/y/z/colorList: [int]`: 列表，序列粒子的x/y/z/color/scale列表
-    - `texture: string`: 粒子的纹理路径，例如`'path/to/texture.png'`
-
-- ### **soy:best** 自定义粒子
-
-```cmd
-soy:best <xExp: string> <yExp: string> <zExp: string> <life: int> <random: int> <colorExp: string>
-e.g.
-particle soy:best 'sin(t/20*2*pi)' '0' 'cos(t/20*2*pi)' 20 5 '16711680' ~ ~1 ~ 0 0 0 0 1 force @a
-此命令会生成一个做圆周运动的红色粒子
+``` mclang
+killparticle <players> <tag>
 ```
 
-- ### **soy:color_particle** 自定义颜色的粒子
+若不指定玩家，则默认为`@a`；若不指定`tag`，则默认清除全部粒子。
 
-```cmd
-soy:color_particle <color>
-```
+## **soy:calc** 函数计算粒子
 
-- ### **soy:life_color_particle** 自定义生命和颜色的粒子
+函数计算粒子适用于**测试**粒子使用，不建议大规模使用此类粒子，容易造成卡顿
 
-```cmd
-soy:life_color_particle <color> <life> <random>
-```
+### NBT参数如下：
 
-- ### **soy:life_color_texture** 自定义生命、颜色和纹理的粒子
+| 名称       | 类型         | 说明                          | 必要? | 默认值        |
+|----------|------------|-----------------------------|-----|------------|
+| `xfun`   | __String__ | 粒子x方向的 __计算函数__(相对于粒子的初始位置) | √   |
+| `yfun`   | __String__ | 粒子y方向的 __计算函数__(相对于粒子的初始位置) | √   |
+| `zfun`   | __String__ | 粒子z方向的 __计算函数__(相对于粒子的初始位置) | √   |
+| `cfun`   | __String__ | 粒子颜色的的 __计算函数__(相对于粒子的初始位置) |     | "16777215" |
+| `age`    | __int__    | 粒子寿命                        | √   |
+| `random` | __int__    | 粒子寿命的随机额外寿命                 |     | 1          |    
 
-```cmd
-soy:life_color_texture <color> <life> <random> <scale> <texture>
-```
+## **soy:seq** 序列粒子
 
-- ### **soy:life_end_rod** 自定义生命的原版末地烛粒子
+序列粒子使用数组存储每tick粒子的行为
 
-```cmd
-soy:life_end_rod <life> <random>
-```
+### NBT参数如下：
 
-- ### **soy:life_firework** 自定义生命的原版烟花粒子
+| 名称       | 类型           | 说明                          | 必要? | 默认值        |
+|----------|--------------|-----------------------------|-----|------------|
+| `xlist`  | __double[]__ | 粒子x方向的 __位置序列__(相对于粒子的初始位置) | √   |
+| `yfun`   | __double[]__ | 粒子y方向的 __位置序列__(相对于粒子的初始位置) | √   |
+| `zfun`   | __double[]__ | 粒子z方向的 __位置序列__(相对于粒子的初始位置) | √   |
+| `age`    | __int__      | 粒子寿命                        | √   |
+| `random` | __int__      | 粒子寿命的随机额外寿命                 |     | 1          |         |
+| `clist`  | __int[]__    | 粒子的 __颜色序列(rgba)__          |     | [16777215] |
+| `alist`  | __int[]__    | 粒子的 __大小序列__                |     | [1f]       |
 
-```cmd
-soy:life_firework <life> <random>
-```
+## **soy:seqt** 序列材质粒子
 
-- ### **soy:seq** 序列粒子
-这个粒子适合用于穷举运动位置，颜色，大小，貌似是每tick变化一次，我没有测试过
-```cmd
-soy:seq <xList> <yList> <zList> <life> <random> <colorList> <scaleList>
-```
+序列材质粒子使用数组存储每tick粒子的行为，支持使用自定义材质来改变粒子外观
 
-- ### **soy:seqt** 自定义纹理序列粒子
-```cmd
-soy:seq <xList> <yList> <zList> <life> <random> <colorList> <scaleList> <texture>
-```
+### NBT参数如下：
 
-**文档由 [SnowyKami](https://github.com/snowykami) 提供**
+<table>
+<thead><tr><td><b>名称</b></td><td><b>类型</b></td><td><b>说明</b></td><td><b>必要?</b></td><td><b>默认值</b></td></tr></thead>
+<tr><td align="center" colspan="5"><b>继承soy:seqt的全部参数</b></td></tr>
+<tr><td><code>texture</code></td><td><b>string</b></td><td>材质的名称</td><td></td><td>""</td></tr>
+</table>
+
+## **soy:seqv** 序列视角粒子
+
+序列视角粒子使用数组存储每tick粒子的行为，同时为粒子添加了视角变换功能
+
+### NBT参数如下：
+
+<table>
+<thead><tr><td><b>名称</b></td><td><b>类型</b></td><td><b>说明</b></td><td><b>必要?</b></td><td><b>默认值</b></td></tr></thead>
+<tr><td align="center" colspan="5"><b>继承soy:seqt的全部参数</b></td></tr>
+
+<tr><td><code>relative</code></td><td><b>boolean</b></td><td>视角是否相对于玩家的视角变化</td><td></td><td>true</td></tr>
+<tr><td><code>angleX</code></td><td><b>float[]</b></td><td>x方向旋转</td><td></td><td>[0f]</td></tr>
+<tr><td><code>angleY</code></td><td><b>float[]</b></td><td>y方向旋转</td><td></td><td>[0f]</td></tr>
+<tr><td><code>angleZ</code></td><td><b>float[]</b></td><td>z方向旋转</td><td></td><td>[0f]</td></tr>
+</table>

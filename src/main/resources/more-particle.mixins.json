@@ -4,7 +4,6 @@
   "package": "name.soy.moreparticle.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "CommandManagerMixin",
     "CustomPayloadS2CPacketMixin",
     "ParticleCommandMixin",
     "ServerWorldAccessor",
@@ -14,10 +13,9 @@
     "AnimatedParticleMixin",
     "ClientPlayNetworkHandlerMixin",
     "ClientWorldAccessor",
-    "ParticleManagerMixin",
+    "ParticleEngineMixin",
     "ParticleMixin",
-    "WorldRenderInvoker",
-    "WorldRenderMixin"
+    "WorldRenderInvoker"
   ],
   "injectors": {
     "defaultRequire": 1

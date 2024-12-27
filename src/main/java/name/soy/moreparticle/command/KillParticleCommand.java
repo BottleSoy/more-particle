@@ -6,31 +6,36 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import io.netty.buffer.Unpooled;
 import name.soy.moreparticle.MoreParticle;
 import name.soy.moreparticle.MoreParticlePayload;
-import net.minecraft.command.argument.EntityArgumentType;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.mixin.command.CommandManagerMixin;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
 
 public class KillParticleCommand {
-	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		dispatcher.register(CommandManager.literal("killparticle")
-			.requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2))
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+		dispatcher.register(Commands.literal("killparticle")
+			.requires((CommandSourceStack serverCommandSource) -> serverCommandSource.hasPermission(2))
 			.executes(context -> {
 				killParicle(Lists.newArrayList(context.getSource().getPlayer()), null);
 				return 1;
 			})
-			.then(CommandManager.argument("players", EntityArgumentType.players())
+			.then(Commands.argument("players", EntityArgument.players())
 				.executes(context -> {
-					killParicle(EntityArgumentType.getPlayers(context, "players"), null);
+					killParicle(EntityArgument.getPlayers(context, "players"), null);
 					return 1;
 				})
-				.then(CommandManager.argument("tag", StringArgumentType.string())
+				.then(Commands.argument("tag", StringArgumentType.string())
 					.executes(context -> {
-						killParicle(EntityArgumentType.getPlayers(context, "players"), StringArgumentType.getString(context, "tag"));
+						killParicle(EntityArgument.getPlayers(context, "players"), StringArgumentType.getString(context, "tag"));
 						return 1;
 					})
 				)
@@ -38,17 +43,17 @@ public class KillParticleCommand {
 		);
 	}
 
-	public static void killParicle(Collection<ServerPlayerEntity> players, String tag) {
+	public static void killParicle(Collection<ServerPlayer> players, String tag) {
 		players.forEach(player -> {
-			PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+			var buf = RegistryFriendlyByteBuf.decorator(player.server.registryAccess()).apply(Unpooled.buffer());
 			if (tag == null) {
 				buf.writeInt(2);
 			} else {
 				buf.writeInt(1);
-				buf.writeString(tag);
+				buf.writeUtf(tag);
 			}
 
-			player.networkHandler.sendPacket(new CustomPayloadS2CPacket(new MoreParticlePayload(buf)));
+			player.connection.send(new ClientboundCustomPayloadPacket(new MoreParticlePayload(buf)));
 		});
 	}
 }
