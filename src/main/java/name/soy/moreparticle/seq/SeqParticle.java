@@ -15,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 public class SeqParticle extends TextureSheetParticle {
-
-
 	public static void register() {
 		ParticleFactoryRegistry.getInstance().register(SeqEffect.type, Provider::new);
 		ParticleFactoryRegistry.getInstance().register(SeqTEffect.type, TProvider::new);
@@ -27,26 +25,29 @@ public class SeqParticle extends TextureSheetParticle {
 
 	public double lx = 0, ly = 0, lz = 0;
 	public int lightColor;
-
+	public final ParticleRenderType renderType;
 	protected SeqParticle(ClientLevel world, double x, double y, double z, SpriteSet spriteProvider, SeqEffect parameters) {
 		super(world, x, y, z);
+		this.renderType= parameters.renderType.type;
 		this.effect = parameters;
 		this.hasPhysics = false;
 		if (age < effect.clist.size()) {
-			this.setColor(effect.clist.get(age));
+			var color = effect.clist.get(age);
+			this.setColor(color);
+			this.setAlpha(1 - (color >> 24) / 255F);
 		}
 		if (age < effect.alist.size()) {
 			this.quadSize = effect.alist.get(age);
 		}
 		double cx = 0, cy = 0, cz = 0;
 		if (age < effect.xlist.size()) {
-			cx = effect.xlist.get(age);
+			cx = this.lx = effect.xlist.get(age);
 		}
 		if (age < effect.ylist.size()) {
-			cy = effect.ylist.get(age);
+			cy = this.ly = effect.ylist.get(age);
 		}
 		if (age < effect.xlist.size()) {
-			cz = effect.zlist.get(age);
+			cz = this.lz = effect.zlist.get(age);
 		}
 		this.move(cx, cy, cz);
 		this.lifetime = new Random().nextInt(effect.random) + effect.age;
@@ -106,9 +107,9 @@ public class SeqParticle extends TextureSheetParticle {
 	}
 
 	public void setColor(int i) {
-		float f = (float) ((i & 0xFF0000) >> 16) / 255.0F;
-		float g = (float) ((i & 0xFF00) >> 8) / 255.0F;
-		float h = (float) ((i & 0xFF) >> 0) / 255.0F;
+		float f = (float) ((i & 0x00FF0000) >> 16) / 255.0F;
+		float g = (float) ((i & 0x0000FF00) >> 8) / 255.0F;
+		float h = (float) ((i & 0x000000FF) >> 0) / 255.0F;
 		this.setColor(f, g, h);
 	}
 
@@ -119,7 +120,7 @@ public class SeqParticle extends TextureSheetParticle {
 
 	@Override
 	public @NotNull ParticleRenderType getRenderType() {
-		return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+		return this.renderType;
 	}
 
 	@Environment(EnvType.CLIENT)

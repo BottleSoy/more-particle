@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class CustomPayloadS2CPacketMixin {
 	@Inject(method = "findCodec", at = @At("RETURN"), cancellable = true)
 	private <B extends FriendlyByteBuf> void addMPP(ResourceLocation resourceLocation, CallbackInfoReturnable<StreamCodec<? super B, ? extends CustomPacketPayload>> cir) {
-		System.out.println(cir.getReturnValue());
 		if (resourceLocation.equals(MoreParticle.id)) {
 			cir.setReturnValue((StreamCodec<? super B, ? extends CustomPacketPayload>) MoreParticlePayload.STREAM_CODEC);
 		}

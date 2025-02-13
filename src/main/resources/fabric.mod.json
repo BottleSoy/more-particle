@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "more-particle",
-  "version": "1.6.2",
+  "version": "1.6.30",
   "name": "More Particle",
   "description": "",
   "icon": "icon.png",
@@ -11,6 +11,7 @@
     "sources": "https://github.com/BottleSoy/more-particle",
     "email": "soy@soy-bottle.top"
   },
+  "accessWidener" : "more-particle.accesswidener",
   "license": "GPL",
   "environment": "*",
   "entrypoints": {
@@ -26,6 +27,6 @@
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=1.21.4"
+    "minecraft": ">=1.21.1"
   }
 }

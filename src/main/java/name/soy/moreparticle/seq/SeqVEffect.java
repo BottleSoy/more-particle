@@ -27,10 +27,10 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 	boolean relative;//是否相对于玩家视角旋转
 
 	public SeqVEffect(List<Double> xlist, List<Double> ylist, List<Double> zlist,
-	                  int age, int random, List<Integer> clist, List<Float> alist, List<Integer> light, String texture,
-	                  List<Float> angleX, List<Float> angleY, List<Float> angleZ, boolean relative
+	                  int age, int random, List<Integer> clist, List<Float> alist, List<Integer> light, RenderType renderType
+		, String texture, List<Float> angleX, List<Float> angleY, List<Float> angleZ, boolean relative
 	) {
-		super(xlist, ylist, zlist, age, random, clist, alist, light, texture);
+		super(xlist, ylist, zlist, age, random, clist, alist, light, renderType, texture);
 		this.angleX = angleX;
 		this.angleY = angleY;
 		this.angleZ = angleZ;
@@ -57,6 +57,8 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 			writeIntArray(buf, effect.clist);
 			writeFloatArray(buf, effect.alist);
 			writeIntArray(buf, effect.light);
+			buf.writeEnum(effect.renderType);
+
 			buf.writeUtf(effect.texture);
 			writeFloatArray(buf, effect.angleX);
 			writeFloatArray(buf, effect.angleY);
@@ -74,6 +76,7 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 				readIntArray(buf),
 				readFloatArray(buf),
 				readIntArray(buf),
+				buf.readEnum(RenderType.class),
 				buf.readUtf(),
 				readFloatArray(buf),
 				readFloatArray(buf),
@@ -92,6 +95,7 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 			Codec.list(Codec.INT).fieldOf("clist").orElse(List.of(16777215)).forGetter(e -> e.clist),
 			Codec.list(Codec.FLOAT).fieldOf("alist").orElse(List.of(0.2f * 0.75f)).forGetter(e -> e.alist),
 			Codec.list(Codec.INT).fieldOf("light").orElse(List.of(15728880)).forGetter(e -> e.light),
+			Codec.STRING.fieldOf("render").xmap(RenderType::valueOf, Enum::name).orElse(RenderType.PARTICLE_SHEET_TRANSLUCENT).forGetter(e -> e.renderType),
 			Codec.STRING.fieldOf("texture").orElse("").forGetter(e -> e.texture),
 			Codec.list(Codec.FLOAT).fieldOf("angleX").orElse(List.of(0f)).forGetter(e -> e.angleX),
 			Codec.list(Codec.FLOAT).fieldOf("angleY").orElse(List.of(0f)).forGetter(e -> e.angleY),

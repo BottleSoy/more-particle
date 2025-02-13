@@ -33,17 +33,18 @@ public class SeqVParticle extends SeqParticle {
 
 	protected SeqVParticle(ClientLevel world, double x, double y, double z, SpriteSet spriteProvider, SeqVEffect parameters) {
 		super(world, x, y, z, spriteProvider, parameters);
+		this.relative = parameters.relative;
 		this.angleX = parameters.angleX;
 		this.angleY = parameters.angleY;
 		this.angleZ = parameters.angleZ;
 		if (age < this.angleX.size()) {
-			this.ax = angleX.get(age);
+			this.preAX = this.lAx = this.ax = angleX.get(age);
 		}
 		if (age < this.angleY.size()) {
-			this.ay = angleY.get(age);
+			this.preAY = this.lAy = this.ay = angleY.get(age);
 		}
 		if (age < this.angleZ.size()) {
-			this.az = angleZ.get(age);
+			this.preAZ = this.lAz = this.az = angleZ.get(age);
 		}
 
 	}
@@ -110,9 +111,9 @@ public class SeqVParticle extends SeqParticle {
 			zd = cz - lz;
 			this.move(this.xd, this.yd, this.zd);
 
-			lAx = cAx;
-			lAy = cAy;
-			lAz = cAz;
+			this.lAx = this.ax = cAx;
+			this.lAy = this.ay = cAy;
+			this.lAz = this.az = cAz;
 
 			lx = cx;
 			ly = cy;
@@ -167,16 +168,10 @@ public class SeqVParticle extends SeqParticle {
 
 		@Override
 		public Particle createParticle(SeqVEffect parameters, ClientLevel world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-			try {
-				SpriteSet provider = null;
-				if (!parameters.texture.isEmpty())
-					provider = ((ParticleManagerAccessor) MoreParticleClient.pm).getSpriteAwareFactories().get(ResourceLocation.parse(parameters.texture));
-
-				return new SeqVParticle(world, x, y, z, provider != null ? provider : spriteProvider, parameters);
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
+			SpriteSet provider = null;
+			if (!parameters.texture.isEmpty())
+				provider = ((ParticleManagerAccessor) MoreParticleClient.pm).getSpriteAwareFactories().get(ResourceLocation.parse(parameters.texture));
+			return new SeqVParticle(world, x, y, z, provider != null ? provider : spriteProvider, parameters);
 		}
 	}
 }

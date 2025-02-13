@@ -5,8 +5,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import name.soy.moreparticle.MoreParticle;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.FriendlyByteBuf;
@@ -23,6 +25,16 @@ import java.util.List;
 @ToString
 public class SeqEffect implements ParticleOptions, Serializable {
 	public static ParticleType<SeqEffect> type;
+
+	@RequiredArgsConstructor
+	public enum RenderType {
+		TERRAIN_SHEET(ParticleRenderType.TERRAIN_SHEET),
+		PARTICLE_SHEET_OPAQUE(ParticleRenderType.PARTICLE_SHEET_OPAQUE),
+		PARTICLE_SHEET_TRANSLUCENT(ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT),
+		PARTICLE_SHEET_LIT(ParticleRenderType.PARTICLE_SHEET_LIT),
+		NO_RENDER(ParticleRenderType.NO_RENDER);
+		public final ParticleRenderType type;
+	}
 
 	public static void register() {
 		type = MoreParticle.register(
@@ -43,6 +55,7 @@ public class SeqEffect implements ParticleOptions, Serializable {
 			writeIntArray(buf, effect.clist);
 			writeFloatArray(buf, effect.alist);
 			writeIntArray(buf, effect.light);
+			buf.writeEnum(effect.renderType);
 		}
 
 		@Override
@@ -54,7 +67,8 @@ public class SeqEffect implements ParticleOptions, Serializable {
 				buf.readVarInt(), buf.readVarInt(),
 				readIntArray(buf),
 				readFloatArray(buf),
-				readIntArray(buf)
+				readIntArray(buf),
+				buf.readEnum(RenderType.class)
 			);
 		}
 	};
@@ -66,7 +80,8 @@ public class SeqEffect implements ParticleOptions, Serializable {
 			Codec.INT.fieldOf("random").orElse(1).forGetter(e -> e.random),
 			Codec.list(Codec.INT).fieldOf("clist").orElse(List.of(16777215)).forGetter(e -> e.clist),
 			Codec.list(Codec.FLOAT).fieldOf("alist").orElse(List.of(0.2f * 0.75f)).forGetter(e -> e.alist),
-			Codec.list(Codec.INT).fieldOf("light").orElse(List.of(15728880)).forGetter(e -> e.light)
+			Codec.list(Codec.INT).fieldOf("light").orElse(List.of(15728880)).forGetter(e -> e.light),
+			Codec.STRING.fieldOf("render").xmap(RenderType::valueOf, Enum::name).orElse(RenderType.PARTICLE_SHEET_TRANSLUCENT).forGetter(e -> e.renderType)
 		).apply(instance, SeqEffect::new)
 	);
 
@@ -75,6 +90,7 @@ public class SeqEffect implements ParticleOptions, Serializable {
 	public List<Integer> clist;
 	public List<Float> alist;
 	public List<Integer> light;
+	public RenderType renderType;
 
 	@Override
 	public @NotNull ParticleType<?> getType() {

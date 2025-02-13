@@ -69,7 +69,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 					double d = packet.getMaxSpeed() * packet.getXDist();
 					double e = packet.getMaxSpeed() * packet.getYDist();
 					double f = packet.getMaxSpeed() * packet.getZDist();
-					Particle particle = render.addParticle(packet.getParticle(), packet.alwaysShow(), false,
+					Particle particle = render.addParticle(packet.getParticle(), true, false,
 						packet.getX(), packet.getY(), packet.getZ(), d, e, f);
 
 					MoreParticleClient.tagParticles.put(particle, tag);
@@ -91,7 +91,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 						double l = random.nextGaussian() * (double) packet.getMaxSpeed();
 						double m = random.nextGaussian() * (double) packet.getMaxSpeed();
 
-						Particle particle = render.addParticle(packet.getParticle(), packet.alwaysShow(), false,
+						Particle particle = render.addParticle(packet.getParticle(), true, false,
 							g, h, j,
 							k, l, m);
 						MoreParticleClient.tagParticles.put(particle, tag);

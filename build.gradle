@@ -40,7 +40,9 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 }
 
-
+loom{
+    accessWidenerPath = file("src/main/resources/more-particle.accesswidener")
+}
 
 
 // configure the maven publication
