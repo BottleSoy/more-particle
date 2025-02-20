@@ -19,15 +19,17 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
 
 public class MoreParticle implements ModInitializer {
-	public static final List<ClientboundLevelParticlesPacket> packets = new ArrayList<>();
+	public static final HashMap<ServerPlayer, ArrayList<ClientboundLevelParticlesPacket>> allpacket = new HashMap<>();
 	public static final ResourceLocation id = ResourceLocation.fromNamespaceAndPath("soy", "more-particle");
 
 
@@ -41,28 +43,37 @@ public class MoreParticle implements ModInitializer {
 			KillParticleCommand.register(dispatcher);
 		});
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
-			if (!packets.isEmpty()) {
-				RegistryFriendlyByteBuf bytes = RegistryFriendlyByteBuf.decorator(server.registryAccess()).apply(Unpooled.buffer());
-				bytes.writeInt(-1);
-				bytes.writeInt(packets.size());
-				packets.forEach(packet -> ClientboundLevelParticlesPacket.STREAM_CODEC.encode(bytes, packet));
-				packets.clear();
-				server.getPlayerList().broadcastAll(new ClientboundCustomPayloadPacket(new MoreParticlePayload(bytes)));
+			if (!allpacket.isEmpty()) {
+				allpacket.forEach((player, packets) -> {
+					RegistryFriendlyByteBuf bytes = RegistryFriendlyByteBuf.decorator(server.registryAccess()).apply(Unpooled.buffer());
+					bytes.writeInt(-1);
+					bytes.writeInt(packets.size());
+					packets.forEach((p) ->
+						ClientboundLevelParticlesPacket.STREAM_CODEC.encode(bytes, p)
+					);
+
+					player.connection.send(new ClientboundCustomPayloadPacket(new MoreParticlePayload(bytes)));
+				});
+
+				allpacket.clear();
 			}
 		});
+
 	}
 
 	public static <T extends ParticleOptions> ParticleType<T> register(
-		ResourceLocation name,
+		final ResourceLocation name,
 		final Function<ParticleType<T>, StreamCodec<? super RegistryFriendlyByteBuf, T>> stream,
 		final Function<ParticleType<T>, MapCodec<T>> text) {
 		ParticleType<T> type = new ParticleType<>(true) {
-			@Override @NotNull
+			@Override
+			@NotNull
 			public MapCodec<T> codec() {
 				return text.apply(this);
 			}
 
-			@Override @NotNull
+			@Override
+			@NotNull
 			public StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec() {
 				return stream.apply(this);
 			}

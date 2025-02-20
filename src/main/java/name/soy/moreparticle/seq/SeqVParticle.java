@@ -59,7 +59,7 @@ public class SeqVParticle extends SeqParticle {
 		this.preAY = this.ay;
 		this.preAZ = this.az;
 
-		if (this.age++ >= this.lifetime) {
+		if (++this.age >= this.lifetime) {
 			this.remove();
 		} else {
 			this.setSpriteFromAge(this.sprites);

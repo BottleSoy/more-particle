@@ -31,7 +31,6 @@ public class SeqEffect implements ParticleOptions, Serializable {
 		TERRAIN_SHEET(ParticleRenderType.TERRAIN_SHEET),
 		PARTICLE_SHEET_OPAQUE(ParticleRenderType.PARTICLE_SHEET_OPAQUE),
 		PARTICLE_SHEET_TRANSLUCENT(ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT),
-		PARTICLE_SHEET_LIT(ParticleRenderType.PARTICLE_SHEET_LIT),
 		NO_RENDER(ParticleRenderType.NO_RENDER);
 		public final ParticleRenderType type;
 	}

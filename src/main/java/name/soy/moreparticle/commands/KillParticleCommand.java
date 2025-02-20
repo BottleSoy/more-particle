@@ -19,17 +19,17 @@ public class KillParticleCommand {
 		dispatcher.register(Commands.literal("killparticle")
 			.requires((CommandSourceStack serverCommandSource) -> serverCommandSource.hasPermission(2))
 			.executes(context -> {
-				killParicle(Lists.newArrayList(context.getSource().getPlayer()), null);
+				killParticle(Lists.newArrayList(context.getSource().getPlayer()), null);
 				return 1;
 			})
 			.then(Commands.argument("players", EntityArgument.players())
 				.executes(context -> {
-					killParicle(EntityArgument.getPlayers(context, "players"), null);
+					killParticle(EntityArgument.getPlayers(context, "players"), null);
 					return 1;
 				})
 				.then(Commands.argument("tag", StringArgumentType.string())
 					.executes(context -> {
-						killParicle(EntityArgument.getPlayers(context, "players"), StringArgumentType.getString(context, "tag"));
+						killParticle(EntityArgument.getPlayers(context, "players"), StringArgumentType.getString(context, "tag"));
 						return 1;
 					})
 				)
@@ -37,7 +37,7 @@ public class KillParticleCommand {
 		);
 	}
 
-	public static void killParicle(Collection<ServerPlayer> players, String tag) {
+	public static void killParticle(Collection<ServerPlayer> players, String tag) {
 		players.forEach(player -> {
 			var buf = RegistryFriendlyByteBuf.decorator(player.server.registryAccess()).apply(Unpooled.buffer());
 			if (tag == null) {

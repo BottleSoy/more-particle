@@ -22,7 +22,7 @@ particle <name>{<NBT>} [<pos>] [<delta>] <speed> <count> [force|normal] [viewers
 killparticle <players> <tag>
 ```
 
-if has no `player` felid ,select all player; if has no `tag` field, kill all particle
+if has no `player` felid ,select executor; if has no `tag` field, kill all particle
 
 ### particle render modes(enum)
 

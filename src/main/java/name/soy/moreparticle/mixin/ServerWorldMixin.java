@@ -9,6 +9,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+import java.util.ArrayList;
+
 @Mixin(ServerLevel.class)
 public class ServerWorldMixin {
 	//	@Inject(method = "sendToPlayerIfNearby", at = @At("RETURN"), cancellable = true)
@@ -18,8 +20,8 @@ public class ServerWorldMixin {
 //		cir.setReturnValue(true);
 //	}
 
-	@Redirect(method = "sendParticles(Lnet/minecraft/server/level/ServerPlayer;ZDDDLnet/minecraft/network/protocol/Packet;)Z", at = @At(value = "INVOKE",target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;)V"))
-	private void topackets(ServerGamePacketListenerImpl instance, Packet<?> packet) {
-		MoreParticle.packets.add((ClientboundLevelParticlesPacket) packet);
+	@Redirect(method = "sendParticles(Lnet/minecraft/server/level/ServerPlayer;ZDDDLnet/minecraft/network/protocol/Packet;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;)V"))
+	private void toPackets(ServerGamePacketListenerImpl instance, Packet<?> packet) {
+		MoreParticle.allpacket.computeIfAbsent(instance.player, (p) -> new ArrayList<>()).add((ClientboundLevelParticlesPacket) packet);
 	}
 }
