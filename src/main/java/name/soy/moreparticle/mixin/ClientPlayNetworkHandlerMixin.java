@@ -119,6 +119,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 			} else if (action == 2) {
 				MoreParticleClient.pm.setLevel(minecraft.level);
 			}
+			buf.release();
 		}
 	}
 }

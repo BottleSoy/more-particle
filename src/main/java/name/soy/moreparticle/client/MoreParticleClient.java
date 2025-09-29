@@ -3,6 +3,7 @@ package name.soy.moreparticle.client;
 import name.soy.moreparticle.calc.CalcParticle;
 import name.soy.moreparticle.seq.SeqParticle;
 import name.soy.moreparticle.seq.SeqVParticle;
+import name.soy.moreparticle.vertex.VertexParticle;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -26,6 +27,6 @@ public class MoreParticleClient implements ClientModInitializer {
 		CalcParticle.register();
 		SeqParticle.register();
 		SeqVParticle.register();
-
+		VertexParticle.register();
 	}
 }

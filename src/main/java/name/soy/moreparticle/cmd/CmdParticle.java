@@ -5,8 +5,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
-import org.jetbrains.annotations.NotNull;
-import org.joml.Quaternionf;
+
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -73,15 +72,6 @@ public class CmdParticle extends TextureSheetParticle {
 	}
 
 	@Override
-	public void render(VertexConsumer vertexConsumer, Camera camera, float f) {
-		Quaternionf quaternionf = new Quaternionf();
-		this.getFacingCameraMode().setRotation(quaternionf, camera, f);
-		this.renderRotatedQuad(vertexConsumer, camera, quaternionf, f);
-
-	}
-
-	@Override
-	@NotNull
 	public ParticleRenderType getRenderType() {
 		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}

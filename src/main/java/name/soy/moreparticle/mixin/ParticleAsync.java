@@ -1,14 +1,10 @@
 //package name.soy.moreparticle.mixin;
 //
-//import com.google.common.collect.Lists;
 //import lombok.val;
 //import name.soy.moreparticle.client.MoreParticleClient;
-//import net.minecraft.client.particle.EmitterParticle;
+//import net.minecraft.client.multiplayer.ClientLevel;
 //import net.minecraft.client.particle.Particle;
-//import net.minecraft.client.particle.ParticleManager;
-//import net.minecraft.client.particle.ParticleTextureSheet;
-//import net.minecraft.client.world.ClientWorld;
-//import org.spongepowered.asm.mixin.Final;
+//import net.minecraft.client.particle.ParticleEngine;
 //import org.spongepowered.asm.mixin.Mixin;
 //import org.spongepowered.asm.mixin.Overwrite;
 //import org.spongepowered.asm.mixin.Shadow;
@@ -21,21 +17,21 @@
 // * 测试多线程性能使用
 // * Testing for muti Thread
 // */
-//@Mixin(ParticleManager.class)
+//@Mixin(ParticleEngine.class)
 //public abstract class ParticleAsync {
 //	private static final ExecutorService exec = Executors.newFixedThreadPool(14);
 //
 //	@Shadow
 //	protected abstract void tickParticle(Particle particle);
 //
-//	@Shadow protected ClientWorld world;
+//	@Shadow protected ClientLevel level;
 //
 //	/**
 //	 * @author soy
 //	 * @reason no
 //	 */
 //	@Overwrite
-//	private void tickParticles(Collection<Particle> particles) {
+//	private void tickParticleList(Collection<Particle> particles) {
 //		if (!particles.isEmpty()) {
 //			Iterator<Particle> iterator = particles.iterator();
 //			List<Particle> tempParticles = new ArrayList<>();

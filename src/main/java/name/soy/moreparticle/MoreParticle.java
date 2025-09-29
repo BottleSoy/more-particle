@@ -7,13 +7,16 @@ import name.soy.moreparticle.commands.KillParticleCommand;
 import name.soy.moreparticle.seq.SeqEffect;
 import name.soy.moreparticle.seq.SeqTEffect;
 import name.soy.moreparticle.seq.SeqVEffect;
+import name.soy.moreparticle.vertex.VertexEffect;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
@@ -39,6 +42,11 @@ public class MoreParticle implements ModInitializer {
 		SeqEffect.register();
 		SeqTEffect.register();
 		SeqVEffect.register();
+		VertexEffect.register();
+		for (ParticleType<?> particleType : BuiltInRegistries.PARTICLE_TYPE) {
+			System.out.println("particle:" +BuiltInRegistries.PARTICLE_TYPE.getKey(particleType) + " ID:" + BuiltInRegistries.PARTICLE_TYPE.getId(particleType));
+
+		}
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			KillParticleCommand.register(dispatcher);
 		});

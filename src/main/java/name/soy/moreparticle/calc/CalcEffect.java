@@ -15,6 +15,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 @AllArgsConstructor
 @ToString
@@ -36,12 +37,12 @@ public class CalcEffect implements ParticleOptions {
 			Codec.STRING.fieldOf("yfun").forGetter(e -> e.yfun),
 			Codec.STRING.fieldOf("zfun").forGetter(e -> e.zfun),
 			Codec.INT.fieldOf("age").forGetter(e -> e.age),
-			Codec.INT.fieldOf("random").forGetter(e -> e.random),
-			Codec.STRING.fieldOf("cfun").forGetter(e -> e.cfun)
+			Codec.INT.fieldOf("random").orElse(1).forGetter(e -> e.random),
+			Codec.STRING.fieldOf("cfun").orElse("16777215").forGetter(e -> e.cfun)
 		).apply(instance, CalcEffect::new));
 	public static final StreamCodec<RegistryFriendlyByteBuf, CalcEffect> STREAM_CODEC = new StreamCodec<>() {
 		@Override
-		public CalcEffect decode(RegistryFriendlyByteBuf buf) {
+		public @NotNull CalcEffect decode(RegistryFriendlyByteBuf buf) {
 			return new CalcEffect(
 				buf.readUtf(),
 				buf.readUtf(),

@@ -1,8 +1,10 @@
 package name.soy.moreparticle.mixin;
 
 import name.soy.moreparticle.client.MoreParticleClient;
+import name.soy.moreparticle.vertex.VertexParticle;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.Map;
+import java.util.*;
 
 
 @Mixin(ParticleEngine.class)
@@ -21,7 +23,12 @@ public class ParticleEngineMixin {
 	private void onInit(ClientLevel clientLevel, TextureManager textureManager, CallbackInfo ci) {
 		MoreParticleClient.pm = (ParticleEngine) (Object) this;
 	}
-
+	@Redirect(method = "render", at = @At(value = "INVOKE", target = "Ljava/util/List;iterator()Ljava/util/Iterator;"))
+	private Iterator<ParticleRenderType> onTick(List<ParticleRenderType> instance) {
+		var newlist = new ArrayList<ParticleRenderType>(instance);
+		newlist.add(VertexParticle.VERTEX_RENDER);
+		return newlist.iterator();
+	}
 	@Redirect(method = "loadParticleDescription", at = @At(value = "INVOKE", target = "Ljava/util/Map;containsKey(Ljava/lang/Object;)Z"))
 	private boolean alwaysLoadParticle(Map<ResourceLocation, SpriteSet> instance, Object o) {
 		ResourceLocation key = (ResourceLocation) o;

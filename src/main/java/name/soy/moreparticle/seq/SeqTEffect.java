@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import static name.soy.moreparticle.utils.WriteUtils.*;
+
 
 @ToString
 public class SeqTEffect extends SeqEffect implements ParticleOptions, Serializable {
@@ -39,10 +41,10 @@ public class SeqTEffect extends SeqEffect implements ParticleOptions, Serializab
 			Codec.list(Codec.DOUBLE).fieldOf("ylist").forGetter(e -> e.ylist),
 			Codec.list(Codec.DOUBLE).fieldOf("zlist").forGetter(e -> e.zlist),
 			Codec.INT.fieldOf("age").forGetter(e -> e.age),
-			Codec.INT.fieldOf("random").forGetter(e -> e.random),
-			Codec.list(Codec.INT).fieldOf("clist").forGetter(e -> e.clist),
-			Codec.list(Codec.FLOAT).fieldOf("alist").forGetter(e -> e.alist),
-			Codec.list(Codec.INT).orElse(List.of(15728880)).fieldOf("light").forGetter(e -> e.light),
+			Codec.INT.fieldOf("random").orElse(1).forGetter(e -> e.random),
+			Codec.list(Codec.INT).fieldOf("clist").orElse(List.of(16777215)).forGetter(e -> e.clist),
+			Codec.list(Codec.FLOAT).fieldOf("alist").orElse(List.of(0.25f)).forGetter(e -> e.alist),
+			Codec.list(Codec.INT).fieldOf("light").orElse(List.of(15728880)).forGetter(e -> e.light),
 			Codec.STRING.fieldOf("render").xmap(RenderType::valueOf, Enum::name).orElse(RenderType.PARTICLE_SHEET_TRANSLUCENT).forGetter(e -> e.renderType),
 			Codec.STRING.fieldOf("texture").forGetter(e -> e.texture)
 		).apply(instance, SeqTEffect::new));

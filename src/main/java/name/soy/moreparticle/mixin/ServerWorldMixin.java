@@ -7,13 +7,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.ArrayList;
 
 @Mixin(ServerLevel.class)
 public class ServerWorldMixin {
-	//	@Inject(method = "sendToPlayerIfNearby", at = @At("RETURN"), cancellable = true)
+//		@Inject(method = "sendToPlayerIfNearby", at = @At("RETURN"), cancellable = true)
 //	private void alwaysSend(ServerPlayerEntity player, boolean force, double x, double y, double z, Packet<?> packet, CallbackInfoReturnable<Boolean> cir) {
 //		if (!cir.getReturnValue())
 //			player.networkHandler.sendPacket(packet);

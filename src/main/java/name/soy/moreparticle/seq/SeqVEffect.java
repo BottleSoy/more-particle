@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.Base64;
 import java.util.List;
 
+import static name.soy.moreparticle.utils.WriteUtils.*;
 @ToString
 public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializable {
 	List<Float> angleX, angleY, angleZ;//旋转角XYZ(欧拉角)
@@ -87,9 +88,9 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 	};
 	public static final MapCodec<SeqVEffect> CODEC = RecordCodecBuilder.mapCodec(instance ->
 		instance.group(
-			Codec.list(Codec.DOUBLE).fieldOf("xlist").forGetter(e -> e.xlist),
-			Codec.list(Codec.DOUBLE).fieldOf("ylist").forGetter(e -> e.ylist),
-			Codec.list(Codec.DOUBLE).fieldOf("zlist").forGetter(e -> e.zlist),
+			Codec.list(Codec.DOUBLE).fieldOf("xlist").orElse(List.of()).forGetter(e -> e.xlist),
+			Codec.list(Codec.DOUBLE).fieldOf("ylist").orElse(List.of()).forGetter(e -> e.ylist),
+			Codec.list(Codec.DOUBLE).fieldOf("zlist").orElse(List.of()).forGetter(e -> e.zlist),
 			Codec.INT.fieldOf("age").forGetter(e -> e.age),
 			Codec.INT.fieldOf("random").orElse(1).forGetter(e -> e.random),
 			Codec.list(Codec.INT).fieldOf("clist").orElse(List.of(16777215)).forGetter(e -> e.clist),
