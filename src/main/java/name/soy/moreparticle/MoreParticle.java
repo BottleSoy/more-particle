@@ -8,6 +8,7 @@ import name.soy.moreparticle.seq.SeqEffect;
 import name.soy.moreparticle.seq.SeqTEffect;
 import name.soy.moreparticle.seq.SeqVEffect;
 import name.soy.moreparticle.vertex.VertexEffect;
+import name.soy.moreparticle.vertex4.Vertex4Effect;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -43,6 +44,7 @@ public class MoreParticle implements ModInitializer {
 		SeqTEffect.register();
 		SeqVEffect.register();
 		VertexEffect.register();
+		Vertex4Effect.register();
 		for (ParticleType<?> particleType : BuiltInRegistries.PARTICLE_TYPE) {
 			System.out.println("particle:" +BuiltInRegistries.PARTICLE_TYPE.getKey(particleType) + " ID:" + BuiltInRegistries.PARTICLE_TYPE.getId(particleType));
 

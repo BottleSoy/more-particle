@@ -1,5 +1,6 @@
 package name.soy.moreparticle.vertex;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mojang.serialization.Codec;
@@ -36,12 +37,12 @@ public class VertexEffect implements ParticleOptions, Serializable, WriteUtils {
 	}
 
 	public int age;
-	public List<Double> p1x, p1y, p1z;
-	public List<Double> p2x, p2y, p2z;
-	public List<Double> p3x, p3y, p3z;
+	public ArrayList<Double> p1x, p1y, p1z,
+		p2x, p2y, p2z,
+		p3x, p3y, p3z;
 
-	public List<Integer> l1, l2, l3;//顶点的光照
-	public List<Integer> c1, c2, c3;//顶点的颜色
+	public ArrayList<Integer> l1, l2, l3;//顶点的光照
+	public ArrayList<Integer> c1, c2, c3;//顶点的颜色
 
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, VertexEffect> STREAM_CODEC = new StreamCodec<>() {
@@ -83,7 +84,7 @@ public class VertexEffect implements ParticleOptions, Serializable, WriteUtils {
 			);
 		}
 	};
-	public static final MapCodec<VertexEffect> CODEC = RecordCodecBuilder.mapCodec(instance ->{
+	public static final MapCodec<VertexEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> {
 		return instance.group(
 			Codec.INT.fieldOf("age").forGetter(e -> e.age),
 
@@ -107,8 +108,18 @@ public class VertexEffect implements ParticleOptions, Serializable, WriteUtils {
 			Codec.list(Codec.INT).fieldOf("c2").orElse(List.of(16777215)).forGetter(e -> e.c2),
 			Codec.list(Codec.INT).fieldOf("c3").orElse(List.of(16777215)).forGetter(e -> e.c3)
 
-		).apply(instance, VertexEffect::new);
+		).apply(instance, (age, p1x, p1y, p1z, p2x, p2y, p2z, p3x, p3y, p3z, l1, l2, l3, c1, c2, c3) -> {
+			return new VertexEffect(
+				age,
+				new ArrayList<>(p1x), new ArrayList<>(p1y), new ArrayList<>(p1z),
+				new ArrayList<>(p2x), new ArrayList<>(p2y), new ArrayList<>(p2z),
+				new ArrayList<>(p3x), new ArrayList<>(p3y), new ArrayList<>(p3z),
+				new ArrayList<>(l1), new ArrayList<>(l2), new ArrayList<>(l3),
+				new ArrayList<>(c1), new ArrayList<>(c2), new ArrayList<>(c3)
+			);
+		});
 	});
+
 	@Override
 	public ParticleType<?> getType() {
 		return type;

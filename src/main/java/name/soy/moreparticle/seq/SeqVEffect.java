@@ -18,18 +18,19 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
 import static name.soy.moreparticle.utils.WriteUtils.*;
 @ToString
 public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializable {
-	List<Float> angleX, angleY, angleZ;//旋转角XYZ(欧拉角)
+	ArrayList<Float> angleX, angleY, angleZ;//旋转角XYZ(欧拉角)
 	boolean relative;//是否相对于玩家视角旋转
 
-	public SeqVEffect(List<Double> xlist, List<Double> ylist, List<Double> zlist,
-	                  int age, int random, List<Integer> clist, List<Float> alist, List<Integer> light, RenderType renderType
-		, String texture, List<Float> angleX, List<Float> angleY, List<Float> angleZ, boolean relative
+	public SeqVEffect(ArrayList<Double> xlist, ArrayList<Double> ylist, ArrayList<Double> zlist,
+	                  int age, int random, ArrayList<Integer> clist, ArrayList<Float> alist, ArrayList<Integer> light, RenderType renderType
+		, String texture, ArrayList<Float> angleX, ArrayList<Float> angleY, ArrayList<Float> angleZ, boolean relative
 	) {
 		super(xlist, ylist, zlist, age, random, clist, alist, light, renderType, texture);
 		this.angleX = angleX;
@@ -102,7 +103,23 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 			Codec.list(Codec.FLOAT).fieldOf("angleY").orElse(List.of(0f)).forGetter(e -> e.angleY),
 			Codec.list(Codec.FLOAT).fieldOf("angleZ").orElse(List.of(0f)).forGetter(e -> e.angleZ),
 			Codec.BOOL.fieldOf("relative").orElse(true).forGetter(e -> e.relative)
-		).apply(instance, SeqVEffect::new));
+		).apply(instance,  (xlist, ylist, zlist, age, random, clist, alist, light, renderType, texture, angleX, angleY, angleZ, relative) ->
+			new SeqVEffect(
+				new ArrayList<>(xlist),
+				new ArrayList<>(ylist),
+				new ArrayList<>(zlist),
+				age,
+				random,
+				new ArrayList<>(clist),
+				new ArrayList<>(alist),
+				new ArrayList<>(light),
+				renderType,
+				texture,
+				new ArrayList<>(angleX),
+				new ArrayList<>(angleY),
+				new ArrayList<>(angleZ),
+				relative
+			)));
 
 	@NotNull
 	@Override

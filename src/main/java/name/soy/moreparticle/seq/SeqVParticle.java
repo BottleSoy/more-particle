@@ -144,21 +144,21 @@ public class SeqVParticle extends SeqParticle {
 
 	protected void renderRotatedQuad(VertexConsumer vertexConsumer, Quaternionf quaternionf, float f, float g, float h, float i) {
 		float j = this.getQuadSize(i);
-		float k = this.getU0();
-		float l = this.getU1();
-		float m = this.getV0();
-		float n = this.getV1();
-		int o = this.getLightColor(i);
-		this.renderVertex(vertexConsumer, quaternionf, f, g, h, 1.0F, -1.0F, j, l, n, o);
-		this.renderVertex(vertexConsumer, quaternionf, f, g, h, 1.0F, 1.0F, j, l, m, o);
-		this.renderVertex(vertexConsumer, quaternionf, f, g, h, -1.0F, 1.0F, j, k, m, o);
-		this.renderVertex(vertexConsumer, quaternionf, f, g, h, -1.0F, -1.0F, j, k, n, o);
+		float u0 = this.getU0();
+		float u1 = this.getU1();
+		float v0 = this.getV0();
+		float v1 = this.getV1();
+		int light = this.getLightColor(i);
+		this.renderVertex(vertexConsumer, quaternionf, f, g, h, 1.0F, -1.0F, j, u1, v1, light);
+		this.renderVertex(vertexConsumer, quaternionf, f, g, h, 1.0F, 1.0F, j, u1, v0, light);
+		this.renderVertex(vertexConsumer, quaternionf, f, g, h, -1.0F, 1.0F, j, u0, v0, light);
+		this.renderVertex(vertexConsumer, quaternionf, f, g, h, -1.0F, -1.0F, j, u0, v1, light);
 	}
 
 	private void renderVertex(
-		VertexConsumer vertexConsumer, Quaternionf quaternionf, float f, float g, float h, float i, float j, float k, float l, float m, int n
+		VertexConsumer vertexConsumer, Quaternionf quaternionf, float f, float g, float h, float hor, float ver, float k, float l, float m, int n
 	) {
-		Vector3f vector3f = new Vector3f(i, j, 0.0F).rotate(quaternionf).mul(k).add(f, g, h);
+		Vector3f vector3f = new Vector3f(hor, ver, 0.0F).rotate(quaternionf).mul(k).add(f, g, h);
 		vertexConsumer.addVertex(vector3f.x(), vector3f.y(), vector3f.z()).setUv(l, m).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(n);
 	}
 

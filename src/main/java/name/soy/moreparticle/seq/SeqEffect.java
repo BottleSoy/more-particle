@@ -24,7 +24,7 @@ import java.util.List;
 
 import static name.soy.moreparticle.utils.WriteUtils.*;
 
-@AllArgsConstructor
+
 @ToString
 public class SeqEffect implements ParticleOptions, Serializable {
 	public static ParticleType<SeqEffect> type;
@@ -84,29 +84,33 @@ public class SeqEffect implements ParticleOptions, Serializable {
 			Codec.list(Codec.FLOAT).fieldOf("alist").orElse(List.of(0.2f * 0.75f)).forGetter(e -> e.alist),
 			Codec.list(Codec.INT).fieldOf("light").orElse(List.of(15728880)).forGetter(e -> e.light),
 			Codec.STRING.fieldOf("render").xmap(RenderType::valueOf, Enum::name).orElse(RenderType.PARTICLE_SHEET_TRANSLUCENT).forGetter(e -> e.renderType)
-		).apply(instance, SeqEffect::new)
+		).apply(instance, (xlist,ylist,zlist, age, random, clist, alist, light, renderType)->
+		new SeqEffect(new ArrayList<>(xlist), new ArrayList<>(ylist), new ArrayList<>(zlist), age, random, new ArrayList<>(clist), new ArrayList<>(alist), new ArrayList<>(light), renderType))
 	);
 
-	public List<Double> xlist, ylist, zlist;
+	public SeqEffect(ArrayList<Double> xlist, ArrayList<Double> ylist, ArrayList<Double> zlist, int age, int random, ArrayList<Integer> clist, ArrayList<Float> alist, ArrayList<Integer> light, RenderType renderType) {
+		this.xlist = xlist;
+		this.ylist = ylist;
+		this.zlist = zlist;
+		this.age = age;
+		this.random = random;
+		this.clist = clist;
+		this.alist = alist;
+		this.light = light;
+		this.renderType = renderType;
+
+	}
+
+	public ArrayList<Double> xlist, ylist, zlist;
 	public int age, random;
-	public List<Integer> clist;
-	public List<Float> alist;
-	public List<Integer> light;
+	public ArrayList<Integer> clist;
+	public ArrayList<Float> alist;
+	public ArrayList<Integer> light;
 	public RenderType renderType;
 
 	@Override
 	public @NotNull ParticleType<?> getType() {
 		return type;
-	}
-
-	public void write(FriendlyByteBuf buf) {
-		writeDoubleArray(buf, xlist);
-		writeDoubleArray(buf, ylist);
-		writeDoubleArray(buf, zlist);
-		buf.writeVarInt(age);
-		buf.writeVarInt(random);
-		writeIntArray(buf, clist);
-		writeFloatArray(buf, alist);
 	}
 
 

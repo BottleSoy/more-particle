@@ -18,6 +18,7 @@ import net.minecraft.util.RandomSource;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -72,16 +73,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 					Particle particle = render.addParticle(packet.getParticle(), true, false,
 						packet.getX(), packet.getY(), packet.getZ(), d, e, f);
 
-					MoreParticleClient.tagParticles.put(particle, tag);
-					MoreParticleClient.particleTags.computeIfPresent(tag, (s, particles) -> {
-						particles.add(particle);
-						return particles;
-					});
-					MoreParticleClient.particleTags.computeIfAbsent(tag, (s) -> {
-						HashSet<Particle> list = new HashSet<>();
-						list.add(particle);
-						return list;
-					});
+					configParticleTag(tag, particle);
 				} else {
 					for (int i = 0; i < packet.getCount(); ++i) {
 						double g = random.nextGaussian() * (double) packet.getXDist();
@@ -94,16 +86,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 						Particle particle = render.addParticle(packet.getParticle(), true, false,
 							g, h, j,
 							k, l, m);
-						MoreParticleClient.tagParticles.put(particle, tag);
-						MoreParticleClient.particleTags.computeIfPresent(tag, (s, particles) -> {
-							particles.add(particle);
-							return particles;
-						});
-						MoreParticleClient.particleTags.computeIfAbsent(tag, (s) -> {
-							HashSet<Particle> list = new HashSet<>();
-							list.add(particle);
-							return list;
-						});
+						configParticleTag(tag, particle);
 					}
 				}
 			} else if (action == 1) {
@@ -121,5 +104,19 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 			}
 			buf.release();
 		}
+	}
+
+	@Unique
+	private void configParticleTag(String tag, Particle particle) {
+		MoreParticleClient.tagParticles.put(particle, tag);
+		MoreParticleClient.particleTags.computeIfPresent(tag, (s, particles) -> {
+			particles.add(particle);
+			return particles;
+		});
+		MoreParticleClient.particleTags.computeIfAbsent(tag, (s) -> {
+			HashSet<Particle> list = new HashSet<>();
+			list.add(particle);
+			return list;
+		});
 	}
 }

@@ -101,3 +101,18 @@ $粒子的亮度=方块亮度 * 16 + 天空亮度 * 65536$
 <tr><td><code>angleY</code></td><td><b>float[]</b></td><td>y方向旋转</td><td></td><td>[0f]</td></tr>
 <tr><td><code>angleZ</code></td><td><b>float[]</b></td><td>z方向旋转</td><td></td><td>[0f]</td></tr>
 </table>
+
+## **soy:vertex** 平面化三点粒子
+
+
+### NBT参数如下：
+
+<table>
+<thead><tr><td><b>名称</b></td><td><b>类型</b></td><td><b>说明</b></td><td><b>必要?</b></td><td><b>默认值</b></td></tr></thead>
+<tr><td align="center" colspan="5"><b>继承soy:seqt的全部参数</b></td></tr>
+
+<tr><td><code>relative</code></td><td><b>boolean</b></td><td>视角是否相对于玩家的视角变化</td><td></td><td>true</td></tr>
+<tr><td><code>angleX</code></td><td><b>float[]</b></td><td>x方向旋转</td><td></td><td>[0f]</td></tr>
+<tr><td><code>angleY</code></td><td><b>float[]</b></td><td>y方向旋转</td><td></td><td>[0f]</td></tr>
+<tr><td><code>angleZ</code></td><td><b>float[]</b></td><td>z方向旋转</td><td></td><td>[0f]</td></tr>
+</table>

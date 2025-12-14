@@ -2,6 +2,7 @@ package name.soy.moreparticle.mixin;
 
 import name.soy.moreparticle.client.MoreParticleClient;
 import name.soy.moreparticle.vertex.VertexParticle;
+import name.soy.moreparticle.vertex4.Vertex4Particle;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.ParticleRenderType;
@@ -27,6 +28,7 @@ public class ParticleEngineMixin {
 	private Iterator<ParticleRenderType> onTick(List<ParticleRenderType> instance) {
 		var newlist = new ArrayList<ParticleRenderType>(instance);
 		newlist.add(VertexParticle.VERTEX_RENDER);
+		newlist.add(Vertex4Particle.VERTEX_RENDER);
 		return newlist.iterator();
 	}
 	@Redirect(method = "loadParticleDescription", at = @At(value = "INVOKE", target = "Ljava/util/Map;containsKey(Ljava/lang/Object;)Z"))

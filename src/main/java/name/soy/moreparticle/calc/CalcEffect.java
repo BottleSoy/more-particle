@@ -2,6 +2,8 @@ package name.soy.moreparticle.calc;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.Products;
+import com.mojang.datafixers.kinds.App;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -31,15 +33,20 @@ public class CalcEffect implements ParticleOptions {
 		);
 	}
 
-	public static final MapCodec<CalcEffect> CODEC = RecordCodecBuilder.mapCodec((instance) ->
-		instance.group(
-			Codec.STRING.fieldOf("xfun").forGetter(e -> e.xfun),
-			Codec.STRING.fieldOf("yfun").forGetter(e -> e.yfun),
-			Codec.STRING.fieldOf("zfun").forGetter(e -> e.zfun),
-			Codec.INT.fieldOf("age").forGetter(e -> e.age),
-			Codec.INT.fieldOf("random").orElse(1).forGetter(e -> e.random),
-			Codec.STRING.fieldOf("cfun").orElse("16777215").forGetter(e -> e.cfun)
-		).apply(instance, CalcEffect::new));
+	public static final MapCodec<CalcEffect> CODEC = RecordCodecBuilder.<CalcEffect>mapCodec((RecordCodecBuilder.Instance<CalcEffect> instance) -> {
+		Products.P6<RecordCodecBuilder.Mu<CalcEffect>, String, String, String, Integer, Integer, String> group = instance.<String, String, String, Integer, Integer, String>group(
+			Codec.STRING.fieldOf("xfun").<CalcEffect>forGetter(e -> e.xfun),
+			Codec.STRING.fieldOf("yfun").<CalcEffect>forGetter(e -> e.yfun),
+			Codec.STRING.fieldOf("zfun").<CalcEffect>forGetter(e -> e.zfun),
+			Codec.INT.fieldOf("age").<CalcEffect>forGetter(e -> e.age),
+			Codec.INT.fieldOf("random").orElse(1).<CalcEffect>forGetter(e -> e.random),
+			Codec.STRING.fieldOf("cfun").orElse("16777215").<CalcEffect>forGetter(e -> e.cfun)
+		);
+
+		App<RecordCodecBuilder.Mu<CalcEffect>, CalcEffect> res = group.apply(instance, CalcEffect::new);
+		return res;
+	});
+
 	public static final StreamCodec<RegistryFriendlyByteBuf, CalcEffect> STREAM_CODEC = new StreamCodec<>() {
 		@Override
 		public @NotNull CalcEffect decode(RegistryFriendlyByteBuf buf) {
