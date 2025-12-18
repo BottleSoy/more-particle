@@ -89,9 +89,9 @@ public class SeqVEffect extends SeqTEffect implements ParticleOptions, Serializa
 	};
 	public static final MapCodec<SeqVEffect> CODEC = RecordCodecBuilder.mapCodec(instance ->
 		instance.group(
-			Codec.list(Codec.DOUBLE).fieldOf("xlist").orElse(List.of()).forGetter(e -> e.xlist),
-			Codec.list(Codec.DOUBLE).fieldOf("ylist").orElse(List.of()).forGetter(e -> e.ylist),
-			Codec.list(Codec.DOUBLE).fieldOf("zlist").orElse(List.of()).forGetter(e -> e.zlist),
+			Codec.list(Codec.DOUBLE).fieldOf("xlist").orElse(List.of(.0)).forGetter(e -> e.xlist),
+			Codec.list(Codec.DOUBLE).fieldOf("ylist").orElse(List.of(.0)).forGetter(e -> e.ylist),
+			Codec.list(Codec.DOUBLE).fieldOf("zlist").orElse(List.of(.0)).forGetter(e -> e.zlist),
 			Codec.INT.fieldOf("age").forGetter(e -> e.age),
 			Codec.INT.fieldOf("random").orElse(1).forGetter(e -> e.random),
 			Codec.list(Codec.INT).fieldOf("clist").orElse(List.of(16777215)).forGetter(e -> e.clist),

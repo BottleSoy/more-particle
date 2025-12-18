@@ -31,6 +31,7 @@ public class Vertex4Effect implements ParticleOptions, Serializable, WriteUtils 
 			(particleType) -> Vertex4Effect.STREAM_CODEC,
 			(particleType) -> Vertex4Effect.MAP_CODEC
 		);
+
 	}
 
 	public int age;

@@ -2,9 +2,13 @@ package name.soy.moreparticle.seq;
 
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.serialization.Codec;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import name.soy.moreparticle.client.MoreParticleClient;
+import name.soy.moreparticle.commands.CmdParticleCommand;
+import name.soy.moreparticle.commands.CommandableParticle;
+import name.soy.moreparticle.vertex.VertexEffect;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.mixin.client.particle.ParticleManagerAccessor;
 import net.minecraft.client.Camera;
@@ -18,9 +22,10 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SeqVParticle extends SeqParticle {
+public class SeqVParticle extends SeqParticle implements CommandableParticle<SeqVCommand> {
 	public float preAX, preAY, preAZ;//之前的朝向
 	public float ax, ay, az; //朝向
 	List<Float> angleX, angleY, angleZ;
@@ -29,6 +34,7 @@ public class SeqVParticle extends SeqParticle {
 
 	public static void register() {
 		ParticleFactoryRegistry.getInstance().register(SeqVEffect.type, VProvider::new);
+		CmdParticleCommand.registerCodec("seqv", SeqVCommand.CODEC.codec());
 	}
 
 	protected SeqVParticle(ClientLevel world, double x, double y, double z, SpriteSet spriteProvider, SeqVEffect parameters) {
@@ -160,6 +166,44 @@ public class SeqVParticle extends SeqParticle {
 	) {
 		Vector3f vector3f = new Vector3f(hor, ver, 0.0F).rotate(quaternionf).mul(k).add(f, g, h);
 		vertexConsumer.addVertex(vector3f.x(), vector3f.y(), vector3f.z()).setUv(l, m).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(n);
+	}
+
+	@Override
+	public void apply(SeqVCommand seqVCommand) {
+		seqVCommand.alpha.ifPresent(alpha -> this.alpha = alpha);
+		seqVCommand.color.ifPresent(this::setColor);
+		seqVCommand.light.ifPresent(light -> this.lightColor = light);
+		seqVCommand.x.ifPresent(x -> {
+			this.lx = x;
+			this.x = x;
+		});
+		seqVCommand.y.ifPresent(y -> {
+			this.ly = y;
+			this.y = y;
+		});
+		seqVCommand.z.ifPresent(z -> {
+			this.lz = z;
+			this.z = z;
+		});
+
+		seqVCommand.ax.ifPresent(ax -> {
+			this.preAX = ax;
+			this.ax = ax;
+		});
+		seqVCommand.ay.ifPresent(ay -> {
+			this.preAY = ay;
+			this.ay = ay;
+		});
+		seqVCommand.az.ifPresent(az -> {
+			this.preAZ = az;
+			this.az = az;
+		});
+
+	}
+
+	@Override
+	public Class<SeqVCommand> getAppliedClass() {
+		return SeqVCommand.class;
 	}
 
 	@RequiredArgsConstructor

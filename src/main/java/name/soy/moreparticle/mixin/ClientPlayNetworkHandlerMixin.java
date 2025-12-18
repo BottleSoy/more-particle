@@ -1,8 +1,16 @@
 package name.soy.moreparticle.mixin;
 
-import io.netty.buffer.ByteBuf;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
+import io.netty.buffer.ByteBufInputStream;
 import name.soy.moreparticle.MoreParticlePayload;
 import name.soy.moreparticle.client.MoreParticleClient;
+import name.soy.moreparticle.commands.CmdParticleCommand;
+import name.soy.moreparticle.commands.CommandableParticle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientCommonPacketListenerImpl;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -23,6 +31,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashSet;
 
 @Mixin(ClientCommonPacketListenerImpl.class)
@@ -49,7 +59,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 			ci.cancel();
 			FriendlyByteBuf buf = new FriendlyByteBuf(mpp.data);
 			int action = buf.readInt();
-			if (action == -1) {
+			if (action == -1) {//send Single Particle
 				if (MoreParticleClient.noParticle) return;
 
 				var count = buf.readInt();
@@ -59,7 +69,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 					ClientboundLevelParticlesPacket packet = ClientboundLevelParticlesPacket.STREAM_CODEC.decode(packetBuf);
 					((ClientPacketListener) lc).handleParticleEvent(packet);
 				}
-			} else if (action == 0) {
+			} else if (action == 0) {//send Particles
 				String tag = buf.readUtf();
 				RegistryFriendlyByteBuf packetBuf = RegistryFriendlyByteBuf.decorator(this.minecraft.getConnection().registryAccess()).apply(buf);
 
@@ -99,8 +109,24 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientCommonPacke
 							particle.remove();
 						}
 					}
-			} else if (action == 2) {
+			} else if (action == 2) { // /killparticle @a
 				MoreParticleClient.pm.setLevel(minecraft.level);
+			} else if (action == 3) {
+				String tag = buf.readUtf();
+				String type = buf.readUtf();
+				var json = JsonParser.parseString(buf.readUtf());
+				var codec = CmdParticleCommand.commandRegistry.get(type);
+
+				var data = codec.decode(new Dynamic<>(JsonOps.INSTANCE, json)).getOrThrow().getFirst();
+				var particles = MoreParticleClient.particleTags.get(tag);
+				if (particles != null)
+					for (Particle particle : particles) {
+						if (particle instanceof CommandableParticle cp) {
+							if (cp.getAppliedClass() == data.getClass()) {
+								cp.apply(data);
+							}
+						}
+					}
 			}
 			buf.release();
 		}

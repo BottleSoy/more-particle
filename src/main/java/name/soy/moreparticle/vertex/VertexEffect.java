@@ -8,6 +8,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.AllArgsConstructor;
 import name.soy.moreparticle.MoreParticle;
+import name.soy.moreparticle.commands.CmdParticleCommand;
 import name.soy.moreparticle.seq.SeqEffect;
 import name.soy.moreparticle.seq.SeqVEffect;
 import name.soy.moreparticle.utils.WriteUtils;
@@ -34,6 +35,7 @@ public class VertexEffect implements ParticleOptions, Serializable, WriteUtils {
 			(particleType) -> VertexEffect.STREAM_CODEC,
 			(particleType) -> VertexEffect.CODEC
 		);
+
 	}
 
 	public int age;

@@ -3,15 +3,20 @@ package name.soy.moreparticle;
 import com.mojang.serialization.MapCodec;
 import io.netty.buffer.Unpooled;
 import name.soy.moreparticle.calc.CalcEffect;
+import name.soy.moreparticle.commands.CmdParticleCommand;
 import name.soy.moreparticle.commands.KillParticleCommand;
+import name.soy.moreparticle.commands.ParticleCommandArgument;
 import name.soy.moreparticle.seq.SeqEffect;
 import name.soy.moreparticle.seq.SeqTEffect;
+import name.soy.moreparticle.seq.SeqVCommand;
 import name.soy.moreparticle.seq.SeqVEffect;
 import name.soy.moreparticle.vertex.VertexEffect;
 import name.soy.moreparticle.vertex4.Vertex4Effect;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -26,6 +31,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,12 +51,14 @@ public class MoreParticle implements ModInitializer {
 		SeqVEffect.register();
 		VertexEffect.register();
 		Vertex4Effect.register();
+		ArgumentTypeRegistry.registerArgumentType(ResourceLocation.parse("soy:particle_command"), ParticleCommandArgument.class,
+			SingletonArgumentInfo.contextFree(() -> new ParticleCommandArgument<>(SeqVCommand.CODEC.codec())));
 		for (ParticleType<?> particleType : BuiltInRegistries.PARTICLE_TYPE) {
-			System.out.println("particle:" +BuiltInRegistries.PARTICLE_TYPE.getKey(particleType) + " ID:" + BuiltInRegistries.PARTICLE_TYPE.getId(particleType));
-
+			System.out.println("particle:" + BuiltInRegistries.PARTICLE_TYPE.getKey(particleType) + " ID:" + BuiltInRegistries.PARTICLE_TYPE.getId(particleType));
 		}
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			KillParticleCommand.register(dispatcher);
+			CmdParticleCommand.register(dispatcher);
 		});
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			if (!allpacket.isEmpty()) {
