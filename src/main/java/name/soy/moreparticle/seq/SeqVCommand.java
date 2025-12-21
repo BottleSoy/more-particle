@@ -4,8 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.AllArgsConstructor;
-import name.soy.moreparticle.vertex.VertexEffect;
-import net.minecraft.network.codec.StreamCodec;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -16,6 +14,8 @@ public class SeqVCommand implements Serializable {
 	Optional<Float>	ax, ay, az;
 	Optional<Integer> color, light;
 	Optional<Float> alpha;
+	Optional<Boolean> noLerp;
+ 	Optional<String> texture;
 	public static final MapCodec<SeqVCommand> CODEC = RecordCodecBuilder.mapCodec(instance -> {
 		return instance.group(
 			Codec.DOUBLE.optionalFieldOf("x").forGetter(e -> e.x),
@@ -26,7 +26,9 @@ public class SeqVCommand implements Serializable {
 			Codec.FLOAT.optionalFieldOf("az").forGetter(e -> e.az),
 			Codec.INT.optionalFieldOf("color").forGetter(e -> e.color),
 			Codec.INT.optionalFieldOf("light").forGetter(e -> e.light),
-			Codec.FLOAT.optionalFieldOf("alpha").forGetter(e -> e.alpha)
+			Codec.FLOAT.optionalFieldOf("alpha").forGetter(e -> e.alpha),
+			Codec.BOOL.optionalFieldOf("noLerp").forGetter(e -> e.noLerp),
+			Codec.STRING.optionalFieldOf("texture").forGetter(e -> e.texture)
 		).apply(instance, SeqVCommand::new);
 	});
 

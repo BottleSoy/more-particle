@@ -2,13 +2,11 @@ package name.soy.moreparticle.seq;
 
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.serialization.Codec;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import name.soy.moreparticle.client.MoreParticleClient;
 import name.soy.moreparticle.commands.CmdParticleCommand;
 import name.soy.moreparticle.commands.CommandableParticle;
-import name.soy.moreparticle.vertex.VertexEffect;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.mixin.client.particle.ParticleManagerAccessor;
 import net.minecraft.client.Camera;
@@ -22,7 +20,6 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.io.Serializable;
 import java.util.List;
 
 public class SeqVParticle extends SeqParticle implements CommandableParticle<SeqVCommand> {
@@ -170,35 +167,48 @@ public class SeqVParticle extends SeqParticle implements CommandableParticle<Seq
 
 	@Override
 	public void apply(SeqVCommand seqVCommand) {
-		seqVCommand.alpha.ifPresent(alpha -> this.alpha = alpha);
-		seqVCommand.color.ifPresent(this::setColor);
+		seqVCommand.alpha.ifPresent(alpha -> this.quadSize = alpha);
+		seqVCommand.color.ifPresent(i -> {
+			setColor(i);
+			setAlpha(1 - (i >> 24) / 255F);
+		});
 		seqVCommand.light.ifPresent(light -> this.lightColor = light);
 		seqVCommand.x.ifPresent(x -> {
+			if (seqVCommand.noLerp.isPresent() && seqVCommand.noLerp.get()) this.xo = x;
 			this.lx = x;
 			this.x = x;
 		});
 		seqVCommand.y.ifPresent(y -> {
+			if (seqVCommand.noLerp.isPresent() && seqVCommand.noLerp.get()) this.yo = y;
 			this.ly = y;
 			this.y = y;
 		});
 		seqVCommand.z.ifPresent(z -> {
+			if (seqVCommand.noLerp.isPresent() && seqVCommand.noLerp.get()) this.zo = z;
 			this.lz = z;
 			this.z = z;
 		});
 
 		seqVCommand.ax.ifPresent(ax -> {
-			this.preAX = ax;
+			if (seqVCommand.noLerp.isPresent() && seqVCommand.noLerp.get()) this.preAX = ax;
+			this.lAx = ax;
 			this.ax = ax;
 		});
 		seqVCommand.ay.ifPresent(ay -> {
-			this.preAY = ay;
+			if (seqVCommand.noLerp.isPresent() && seqVCommand.noLerp.get()) this.preAY = ay;
+			this.lAy = ay;
 			this.ay = ay;
 		});
 		seqVCommand.az.ifPresent(az -> {
-			this.preAZ = az;
+			if (seqVCommand.noLerp.isPresent() && seqVCommand.noLerp.get()) this.preAZ = az;
+			this.lAz = az;
 			this.az = az;
 		});
-
+		seqVCommand.texture.ifPresent(texture -> {
+			SpriteSet provider = ((ParticleManagerAccessor) MoreParticleClient.pm).getSpriteAwareFactories().get(ResourceLocation.parse(texture));
+			if (provider != null)
+				this.sprites = provider;
+		});
 	}
 
 	@Override

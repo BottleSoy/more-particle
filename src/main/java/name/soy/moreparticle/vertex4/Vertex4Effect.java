@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import name.soy.moreparticle.MoreParticle;
+import name.soy.moreparticle.commands.CmdParticleCommand;
 import name.soy.moreparticle.utils.WriteUtils;
 import name.soy.moreparticle.vertex.VertexEffect;
 import net.minecraft.core.particles.ParticleOptions;
@@ -31,7 +32,7 @@ public class Vertex4Effect implements ParticleOptions, Serializable, WriteUtils 
 			(particleType) -> Vertex4Effect.STREAM_CODEC,
 			(particleType) -> Vertex4Effect.MAP_CODEC
 		);
-
+		CmdParticleCommand.registerCodec("vertex4", Vertex4Command.MAP_CODEC.codec());
 	}
 
 	public int age;

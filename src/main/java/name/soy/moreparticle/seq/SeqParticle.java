@@ -20,7 +20,7 @@ public class SeqParticle extends TextureSheetParticle {
 		ParticleFactoryRegistry.getInstance().register(SeqTEffect.type, TProvider::new);
 	}
 
-	protected final SpriteSet sprites;
+	protected SpriteSet sprites;
 	SeqEffect effect;
 
 	public double lx = 0, ly = 0, lz = 0;

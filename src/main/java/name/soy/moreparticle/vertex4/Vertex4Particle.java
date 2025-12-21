@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import lombok.RequiredArgsConstructor;
 import name.soy.moreparticle.client.MoreParticleClient;
+import name.soy.moreparticle.commands.CommandableParticle;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.mixin.client.particle.ParticleManagerAccessor;
 import net.minecraft.client.Camera;
@@ -16,7 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-public class Vertex4Particle extends TextureSheetParticle {
+public class Vertex4Particle extends TextureSheetParticle implements CommandableParticle<Vertex4Command> {
 	double pre1x, pre1y, pre1z;
 	double pre2x, pre2y, pre2z;
 	double pre3x, pre3y, pre3z;
@@ -167,8 +168,6 @@ public class Vertex4Particle extends TextureSheetParticle {
 
 	@Override
 	public void render(VertexConsumer vertexConsumer, Camera camera, float f) {
-		float j = this.getQuadSize(this.quadSize);
-
 		float u0 = this.getU0();
 		float u1 = this.getU1();
 		float v0 = this.getV0();
@@ -217,12 +216,101 @@ public class Vertex4Particle extends TextureSheetParticle {
 			return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
 		}
 	};
+
 	@Override
 	public @NotNull ParticleRenderType getRenderType() {
 		return VERTEX_RENDER;
 	}
+
 	public static void register() {
 		ParticleFactoryRegistry.getInstance().register(Vertex4Effect.type, Vertex4Particle.Provider::new);
+	}
+
+	@Override
+	public void apply(Vertex4Command vertex4Command) {
+		vertex4Command.p1x.ifPresent(p1x -> {
+			this.p1x = p1x;
+		});
+		vertex4Command.p1y.ifPresent(p1y -> {
+			this.p1y = p1y;
+		});
+		vertex4Command.p1z.ifPresent(p1z -> {
+			this.p1z = p1z;
+		});
+		vertex4Command.p2x.ifPresent(p2x -> {
+			this.p2x = p2x;
+		});
+		vertex4Command.p2y.ifPresent(p2y -> {
+			this.p2y = p2y;
+		});
+		vertex4Command.p2z.ifPresent(p2z -> {
+			this.p2z = p2z;
+		});
+		vertex4Command.p3x.ifPresent(p3x -> {
+			this.p3x = p3x;
+		});
+		vertex4Command.p3y.ifPresent(p3y -> {
+			this.p3y = p3y;
+		});
+		vertex4Command.p3z.ifPresent(p3z -> {
+			this.p3z = p3z;
+		});
+		vertex4Command.p4x.ifPresent(p4x -> {
+			this.p4x = p4x;
+		});
+		vertex4Command.p4y.ifPresent(p4y -> {
+			this.p4y = p4y;
+		});
+		vertex4Command.p4z.ifPresent(p4z -> {
+			this.p4z = p4z;
+		});
+		vertex4Command.l1.ifPresent(l1 -> {
+			this.l1 = l1;
+		});
+		vertex4Command.l2.ifPresent(l2 -> {
+			this.l2 = l2;
+		});
+		vertex4Command.l3.ifPresent(l3 -> {
+			this.l3 = l3;
+		});
+		vertex4Command.l4.ifPresent(l4 -> {
+			this.l4 = l4;
+		});
+		vertex4Command.c1.ifPresent(c1 -> {
+			this.c1r = ((c1 & 0x00FF0000) >> 16);
+			this.c1g = ((c1 & 0x0000FF00) >> 8);
+			this.c1b = ((c1 & 0x000000FF) >> 0);
+			this.c1a = 255 - ((c1 & 0xFF000000) >> 24);
+		});
+		vertex4Command.c2.ifPresent(c2 -> {
+			this.c2r = ((c2 & 0x00FF0000) >> 16);
+			this.c2g = ((c2 & 0x0000FF00) >> 8);
+			this.c2b = ((c2 & 0x000000FF) >> 0);
+			this.c2a = 255 - ((c2 & 0xFF000000) >> 24);
+		});
+		vertex4Command.c3.ifPresent(c3 -> {
+			this.c3r = ((c3 & 0x00FF0000) >> 16);
+			this.c3g = ((c3 & 0x0000FF00) >> 8);
+			this.c3b = ((c3 & 0x000000FF) >> 0);
+			this.c3a = 255 - ((c3 & 0xFF000000) >> 24);
+		});
+		vertex4Command.c4.ifPresent(c4 -> {
+			this.c4r = ((c4 & 0x00FF0000) >> 16);
+			this.c4g = ((c4 & 0x0000FF00) >> 8);
+			this.c4b = ((c4 & 0x000000FF) >> 0);
+			this.c4a = 255 - ((c4 & 0xFF000000) >> 24);
+		});
+		vertex4Command.texture.ifPresent(texture -> {
+			SpriteSet provider = ((ParticleManagerAccessor) MoreParticleClient.pm).getSpriteAwareFactories().get(ResourceLocation.parse(texture));
+			if (provider != null) {
+				this.setSpriteFromAge(provider);
+			}
+		});
+	}
+
+	@Override
+	public Class<Vertex4Command> getAppliedClass() {
+		return Vertex4Command.class;
 	}
 
 	@RequiredArgsConstructor
@@ -234,7 +322,8 @@ public class Vertex4Particle extends TextureSheetParticle {
 			SpriteSet provider = null;
 			if (!parameters.texture.isEmpty())
 				provider = ((ParticleManagerAccessor) MoreParticleClient.pm).getSpriteAwareFactories().get(ResourceLocation.parse(parameters.texture));
-			return new Vertex4Particle(world, provider, parameters);
+
+			return new Vertex4Particle(world, provider != null ? provider : spriteProvider, parameters);
 		}
 	}
 }
